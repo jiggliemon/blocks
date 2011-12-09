@@ -1,6 +1,6 @@
 require.debug && console.log('Blocks/Block Loaded.');
 
-define(['Base/Core/Class','Base/Class/Options','Base/Class/Events'], 
+define(['Base/Class','Base/Class/Options','Base/Class/Events'], 
 function(Class,Options,Events) {
   /* 
     *  This is the basic building blocks of our nested templating.

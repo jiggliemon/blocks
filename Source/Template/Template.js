@@ -1,8 +1,8 @@
 
-define(['Base/Core/Class','Base/Class/Events','Request/Request'],
-function(Class,Events, Request){
+define(['Blocks/Template/Mixin','Base/Class','Base/Class/Events','Request/Request'],
+function(TemplateMixin, Class, Events, Request){
   var Template = new Class({
-     Extends: Events
+     Extends: Mixin
     ,_rawTemplate: null
     ,parsed: ''
     ,path: ''
