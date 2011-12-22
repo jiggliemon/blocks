@@ -1,0 +1,4 @@
+
+define(['Test'], function() {
+  return {};
+});
