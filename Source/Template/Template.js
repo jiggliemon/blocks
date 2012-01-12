@@ -14,20 +14,6 @@ function(TemplateMixin, Class, Events, Request){
       return this._rawTemplate;
     }
     
-    ,_loadTemplate: function(tmpl){
-      var self = this;
-      
-      new Request({
-         url: tmpl
-        ,method:'get'
-        ,onSuccess: function(response){
-          self._rawTemplate = response;
-          self.fireEvent('template.loaded',self);
-        }
-      }).send();
-
-    }
-    
     ,toHtml: function(){
       return this.parsed || this.raw;
     }
