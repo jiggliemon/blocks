@@ -9,11 +9,15 @@ define(['block/mixin','template/mixin', 'mediator/mixin'],
   }
 
   function extend (){
-    var target = arguments[0]
+    var  args = arguments
+        ,target = args[0]
+    if(target === undef) return;
 
-    for (var key, i = 1, l = arguments.length; i < l; i++)
-      for (key in arguments[i])
-        target[key] = arguments[i][key]
+    for (var key, i = 1, l = args.length; i < l; i++) {
+      for (key in args[i]) {
+        target[key] = args[i][key]
+      }
+    }
 
     return target
   }

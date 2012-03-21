@@ -1,4 +1,11 @@
 define( function () {
+  var  toString = Object.prototype.toString
+      ,hasOwn = Object.prototype.hasOwnProperty
+  
+  function typeOf (obj) {
+    return toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+  }
+
   function escape (string) {
     return ('' + string)
       .replace(/&/g, '&amp;')
@@ -28,9 +35,9 @@ define( function () {
     
     ,setContext: function (key, value) {
       var context = this._context = this._context || {}
-      if(typeof key === 'object') {
-        for(var k in key) {
-          if(key.hasOwnProperty(k)) {
+      if (typeOf( key ) === 'object') {
+        for (var k in key) {
+          if (hasOwn.call(key,k)) {
             this.setContext(k, key[k]);
           }
         }
@@ -42,7 +49,7 @@ define( function () {
     }
 
     ,getContext: function (args) {
-      var  args = (Array.isArray(args))? args : slice.call(arguments,0)
+      var  args = (typeOf(args) === 'array')? args : slice.call(arguments,0)
           ,context = {};;
 
       if(arguments.length > 0) {
@@ -55,8 +62,8 @@ define( function () {
     
     ,setTags: function ( tags) {
       var key;
-      for (key in tags) {
-        if (tags.hasOwnProperty(key)) {
+      for ( key in tags) {
+        if (hasOwn.call(tags,key)) {
           this._templateTags[key] = tags[key];
         }
       }
@@ -112,9 +119,10 @@ define( function () {
       // This will be part of a str.replace method
       // So the arguments should match those that you would use
       // for the .replace method on strings.
-      if (typeof regexp.exec !== 'function') {
+      if (typeof regexp.exec !== 'function') { // todo: Fix Duck Typing for regexp
         regexp = new RegExp(this.getTag('open') + regexp + this.getTag('close'), 'g');
       }
+      
       this._templateOperators[name] = [regexp, fn];
     }
 
