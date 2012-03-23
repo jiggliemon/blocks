@@ -4,8 +4,9 @@ define( function () {
       ,mixin
       ,forEach = Array.prototype.forEach
       ,slice = Array.prototype.slice
-      ,toString = Object.prototype.toString;
-  
+      ,toString = Object.prototype.toString
+      ,hasOwn = Object.prototype.hasOwnProperty
+
   function typeOf (obj) {
     return toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
   }
@@ -34,7 +35,9 @@ define( function () {
             
         for (key, i = 1, l = arguments.length; i < l; i++) {
           for (key in arguments[i]) {
-            target[key] = arguments[i][key]
+            if(hasOwn.call(arguments[i], key)) {
+              target[key] = arguments[i][key]
+            }
           }
         }
         return target;
@@ -81,8 +84,9 @@ define( function () {
 
       var key;
       for(key in children) {
-        if(children.hasOwnProperty(key))
-        this.setChild(key, children[key]);
+        if(hasOwn.call(children,key)) {
+          this.setChild(key, children[key])
+        }
       }
     }
 
@@ -92,7 +96,7 @@ define( function () {
      *  getChildren(key [,...]) // { key: `Block` child }
      */
     ,getChildren: function (args) {
-      var  args = (Array.isArray(args))? args : slice.call(arguments,0)
+      var  args = (typeOf(args) == 'array')? args : slice.call(arguments,0)
           ,children;
          
       if(arguments.length > 0) {
@@ -124,7 +128,7 @@ define( function () {
           ,str = '',key;
 
       for(key in children) {
-        if(children.hasOwnProperty(key)) {
+        if(hasOwn.call(children, key)) {
           str += String(children[key]);
         }
       }
@@ -149,7 +153,7 @@ define( function () {
 
       if(args.length > 0) {
         for(key in children) {
-          if(children.hasOwnProperty(key)){
+          if(hasOwn.call( children, key )){
             if(args.indexOf(key) === -1) {
               subSet[key] = children[key]
             } else {
@@ -200,7 +204,7 @@ define( function () {
       
       for(key in children) {
         placeholder = null;
-        if(children.hasOwnProperty(key)){
+        if(hasOwn.call( children, key )){
           module = children[key];
           placeholder = this.getBoundElement(module.getUniqueId());
           if(!!(placeholder)) {
@@ -215,7 +219,7 @@ define( function () {
     }
 
     ,clearBoundElements: function (args) {
-      var  args = (Array.isArray(args))? args : slice.call(arguments,0)
+      var  args = (typeOf(args) === 'array')? args : slice.call(arguments,0)
           ,els = this.getBoundElements(args)
 
       this._bound = {};
@@ -227,7 +231,7 @@ define( function () {
     }
 
     ,getBoundElements: function (args) {
-      var  args = (Array.isArray(args))? args : slice.call(arguments,0)
+      var  args = (typeOf(args) === 'array')? args : slice.call(arguments,0)
           ,elements = {}
           ,self = this;
       if (args.length) {
@@ -263,7 +267,7 @@ define( function () {
      */ 
     ,setContainer: function (container) {
       return this.container = (container) ? 
-                    ((typeOf(container)==='string')?document.createElement(container):container)
+                    ((typeof container === 'string')?document.createElement(container):container)
                     :document.createElement('div');
     }
     
