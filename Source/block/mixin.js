@@ -1,52 +1,24 @@
-define( function () {
+define( function (TemplateMixin) {
   var  mixin
       ,blockCount = 0
       ,ObjectProto = Object.prototype
       ,ArrayProto = Array.prototype
-      ,isArray = Array.isArray || function(it) { return typeOf(it) === 'array' }
+      ,isArray = Array.isArray || function(it) { return typeOf(it,'array') }
       ,forEach = ArrayProto.forEach
       ,slice = ArrayProto.slice
       ,toString = ObjectProto.toString
-      ,hasOwn = ObjectProto.hasOwnProperty
+      
 
-  function typeOf (obj,type) {
-    var is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+  function typeOf ( obj, type, is ) {
+    is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
     return type?type === is:is
   }
-  
-  mixin = {
-     initialize: function (options) {
-      options = options || this.options
-      var  self = this
-          ,container = options.container
-      this.setChildren(options.children)
-      this.setTemplate(options.template)
-      this.setContainer(options.container)
-      this.setContext(options.context)
-      this.setContext('$this',this)
-      this.bindTemplate() 
-      this.ready = true
-    }
 
-    /**
-     *
-     *
-     */
-    ,setOptions: function (options) {
-      return (function (){
-        var  target = arguments[0]
-            ,key
-            
-        for (key, i = 1, l = arguments.length i < l i++) {
-          for (key in arguments[i]) {
-            if(hasOwn.call(arguments[i], key)) {
-              target[key] = arguments[i][key]
-            }
-          }
-        }
-        return target
-      }(this.options,options))
-    } 
+  function make ( key, value ) {
+    return this[key] = this[key] || value
+  }
+
+  mixin = {
 
     /**
      *  #setChild
@@ -54,7 +26,7 @@ define( function () {
      *  @param {string} key The childs name
      *  @param {block} value  
      */
-    ,setChild: function (key, value) {
+     setChild: function (key, value) {
       if(!key) return
       this.getChildren()[key] = value
     }
@@ -102,7 +74,7 @@ define( function () {
     ,getChildren: function (args) {
       var  args = isArray('array') ? args : slice.call(arguments,0)
           ,children
-          ,_children = this._children = this._children || {}
+          ,_children = make.call(this,'_children',{})
          
       if(arguments.length > 0) {
         children = {}
@@ -130,7 +102,8 @@ define( function () {
      */
     ,getChildrenHtml: function (args) {
       var  children = this.getChildren.apply(this,arguments)
-          ,str = '',key
+          ,str = ''
+          ,key
 
       for(key in children) {
         if(hasOwn.call(children, key)) {
@@ -241,7 +214,7 @@ define( function () {
      */
     ,setBoundElement: function (key, element) {
 
-      var  boundElements = this._bound = this._bound || {}
+      var  boundElements = make.call(this,'_bound',{})
           ,bound = boundElements[key] = boundElements[key] || []
       bound.push(element)
     }
@@ -270,8 +243,10 @@ define( function () {
      *
      */
     ,getBoundElement: function (key) {
-      var element
-      if(!(element = this._bound[key])){
+      var  element
+          ,_bound = make.call(this,'_bound',{})
+
+      if(!(element = _bound[key])){
         return undefined
       }
       return (element.length === 1) ? element[0]: element

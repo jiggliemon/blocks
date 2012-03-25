@@ -18,10 +18,11 @@ define(function () {
   }
 
   function removeLatched(type){
+    var _latched = make[call](this,_LATCHED_, {})
     if(type.indexOf(':')){
       if(REGEX.test(type)){
         type = type.replace(REGEX,'')
-        (this[_LATCHED_] = this[_LATCHED_] || {})[type] = 1
+        _latched[type] = 1
       }
     }
     return type

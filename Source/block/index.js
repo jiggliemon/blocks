@@ -1,11 +1,19 @@
-define(['block/mixin','template/mixin', 'mediator/mixin'], 
+define(['./mixin','../template/mixin', '../mediator/mixin'], 
   function ( BlockMixin, TemplateMixin, EventsMixin, undef ) {
 
-  var  slice = Array.prototype.slice
-      ,toString = Object.prototype.toString;
+  var  ObjectProto = Object.prototype
+      ,ArrayProto = Array.prototype
+      ,slice = ArrayProto.slice
+      ,toString = ObjectProto.toString
+      ,hasOwn = ObjectProto.hasOwnProperty
 
-  function typeOf (obj) {
-      return toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+  function typeOf (obj,type, is) {
+    is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+    return type ? type === is : is
+  }
+
+  function make ( key, value ) {
+    return this[key] = this[key] || value
   }
 
   function extend (){
@@ -15,7 +23,9 @@ define(['block/mixin','template/mixin', 'mediator/mixin'],
 
     for (var key, i = 1, l = args.length; i < l; i++) {
       for (key in args[i]) {
-        target[key] = args[i][key]
+        if(hasOwn.call(args[i],key)) {
+          target[key] = args[i][key]
+        }
       }
     }
 
@@ -23,19 +33,19 @@ define(['block/mixin','template/mixin', 'mediator/mixin'],
   }
 
   function implement (key, value, retain){
-    var k;
-    if (key === undef) return;
+    var k
+    if (key === undef) return
 
-    if (typeOf(key) === 'object') {
+    if (typeOf(key,'object')) {
       for ( k in key ) {
-        if (key.hasOwnProperty(k)) {    
-          implement.call(this,k, key[k]);
+        if (hasOwn.call(key,k)) {    
+          implement.call(this,k, key[k])
         }
       }  
       return;
     }
 
-    this[key] = (typeof value === 'function') ? (retain) ? value : wrap(this, key, value) : value;
+    this[key] = typeOf( value, 'function') ? (retain) ? value : wrap(this, key, value) : value
      
     return this;
   }
@@ -44,50 +54,78 @@ define(['block/mixin','template/mixin', 'mediator/mixin'],
     function wrapper () {
       var  caller = this.caller 
           ,current = this.$caller
-          ,result;
+          ,result
 
-      this.caller = current; 
-      this.$caller = wrapper;
-      result = method.apply(this, arguments);
-      this.$caller = current; 
-      this.caller = caller;
+      this.caller = current 
+      this.$caller = wrapper
+      result = method.apply(this, arguments)
+      this.$caller = current
+      this.caller = caller
       
-      return result;
+      return result
     }
 
-    wrapper.$parent = self[key];
-    wrapper.$name = key;
+    wrapper.$parent = self[key]
+    wrapper.$name = key
       
-    return wrapper;
+    return wrapper
   }
-
-      
-  function BlockProto (methods) {
-    implement.call(this,methods);
-  }
-  BlockProto.prototype = extend({
-    parent: function (){
-      var  name = this.$caller.$name
-          ,parent = this.$caller.$parent;
-        
-      if (!parent) {
-        throw new Error('The method "' + name + '" has no parent.');
-      }
-        
-      return parent.apply(this, arguments);
-    }
-  }, BlockMixin, TemplateMixin, EventsMixin );
 
   /** @constructor */
-  function Block (methods) {
-
-    function Block () {
-      return (this.initialize) ? this.initialize.apply(this, arguments) : this;
-    }
-    Block.prototype = new BlockProto(methods);
-
-    return  Block;
+  function Block (options) {
+    this.options = {}
+    this.setOptions(options)
+    this.initialize()
   }
+  Block.prototype = extend({
+    initialize: function (options) {
+      options = options || this.options
+      var  self = this
+          ,container = options.container
+      this.setChildren(options.children)
+      this.setTemplate(options.template)
+      this.setContainer(options.container)
+      this.setContext(options.context)
+      this.setContext('$this',this)
+      this.bindTemplate() 
+      this.ready = true
+    }
+
+    /**
+     *
+     *
+     */
+     ,setOptions: function (options) {
+      _options = make.call(this,'options',{})
+      return (function (){
+        var  args = arguments
+            ,target = args[0]
+            ,key
+            ,i = 1
+            ,l = args.length
+            
+        for (; i < l; i++) {
+          for (key in args[i]) {
+            if(hasOwn.call(args[i], key)) {
+              target[key] = args[i][key]
+            }
+          }
+        }
+        return target
+      }(_options,options))
+    } 
+
+    // parent: function (){
+    //   var  name = this.$caller.$name
+    //       ,parent = this.$caller.$parent;
+        
+    //   if (!parent) {
+    //     throw new Error('The method "' + name + '" has no parent.');
+    //   }
+        
+    //   return parent.apply(this, arguments);
+    // }
+  }, TemplateMixin, EventsMixin, BlockMixin )
 
   return Block;
     

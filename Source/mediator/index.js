@@ -1,4 +1,4 @@
-define(['mediator/mixin'], function(EventsMixin){
+define(['./mixin'], function(EventsMixin){
   
   function Mediator (){
     this._events = {};

@@ -1,4 +1,4 @@
-define(['template/mixin'], function( TemplateMixin ) {
+define(['./mixin'], function( TemplateMixin ) {
 
 
   function Template (config) {

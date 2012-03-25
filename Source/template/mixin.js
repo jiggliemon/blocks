@@ -1,40 +1,54 @@
 define( function () {
-  var  op = Object.prototype
+  var  mixin
+      ,pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
+      ,op = Object.prototype
       ,ap = Array.prototype
       ,slice = ap.slice
       ,isArray = Array.isArray || function(it) { return typeOf(it) === 'array' }
       ,toString = op.toString
       ,hasOwn = op.hasOwnProperty
   
+  function isPath ( str ) {
+    if(!str) return !!0;
+    str = String(str)
+
+    if(str.charAt(0) === '<') {
+      return false
+    }
+    return pathRegexp.test(str)
+  }
+
   function typeOf (obj,type) {
     var is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
-    return type?type === is:is
+    return type ? type === is : is
+  }
+
+  function make ( key, value ) {
+    return this[key] = this[key] || value
   }
 
   function escape (string) {
-    return ('' + string)
+    return String(string)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#x27;')
       .replace(/\//g, '&#x2F;')
-  };
+  }
   
-  var TemplateMethods = {
-     _template: null
-
-    ,_templateTags: {
+  mixin = {
+     _templateTags: {
        open: '<%'
       ,close: '%>'
     }
 
     ,_templateOperators: {
        interpolate: ['=([\\s\\S]+?)', function (match, code) {
-        return "'," + code.replace(/\\'/g, "'") + ",'";
+        return "'," + code.replace(/\\'/g, "'") + ",'"
       }]
       ,escape: ['-([\\s\\S]+?)', function (match, code) {
-        return "',escape(" + code.replace(/\\'/g, "'") + "),'";
+        return "',escape(" + code.replace(/\\'/g, "'") + "),'"
       }]
     }
     
@@ -65,13 +79,13 @@ define( function () {
      *
      */ 
     ,getContext: function (args) {
-      var  args = isArray('array')? args : slice.call(arguments,0)
-          ,context = this._context = this._context || {}
+      var  args = isArray('array') ? args : slice.call(arguments,0)
+          ,context = make.call(this, '_context', {})
 
       if(arguments.length > 0) {
         args.forEach(function (arg) {
-          context[arg] = this._context[arg];
-        });
+          context[arg] = this._context[arg]
+        })
       }
       return context
     }
@@ -125,10 +139,19 @@ define( function () {
      *
      */ 
     ,setTemplate: function ( /* String */ str) {
-      if(typeof str === 'string'){
+      var self = this;
+
+      if(isPath(str)) {
+        require([str],function (tmpl) {
+          console.log(tmpl)
+          self._template = tmpl
+          self.fireEvent && self.fireEvent('template:ready:latched',tmpl)
+        })
+      } else {
         this._template = str
         this.fireEvent && this.fireEvent('template:ready:latched',str)
       }
+
     }
 
     /**
@@ -152,7 +175,7 @@ define( function () {
         if (this._templateOperators.hasOwnProperty(key)) {
           operator = this._templateOperators[key]
           if (typeof operator[0] === 'string') {
-            this.addOperator(key, operator[0], operator[1]);
+            this.addOperator(key, operator[0], operator[1])
           }
         }
       }
@@ -180,11 +203,11 @@ define( function () {
       // This will be part of a str.replace method
       // So the arguments should match those that you would use
       // for the .replace method on strings.
-      if (typeof regexp.exec !== 'function') { // todo: Fix Duck Typing for regexp
-        regexp = new RegExp(this.getTag('open') + regexp + this.getTag('close'), 'g');
+      if (!typeOf(regexp, 'regexp')) { // todo: Fix Duck Typing for regexp
+        regexp = new RegExp(this.getTag('open') + regexp + this.getTag('close'), 'g')
       }
       
-      this._templateOperators[name] = [regexp, fn];
+      this._templateOperators[name] = [regexp, fn]
     }
 
     /**
@@ -226,7 +249,7 @@ define( function () {
       }
       return compiled(data)
     }
-  };
+  }
 
-  return TemplateMethods
+  return mixin
 });
