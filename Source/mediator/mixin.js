@@ -29,7 +29,8 @@ define(function () {
   }
 
   function make (key,value) {
-    return this[key] = this[key] || value
+    var it = this[key] = this[key] || value
+    return it
   }
 
   mixin = {
@@ -73,14 +74,16 @@ define(function () {
       
       var  _events = make[call](this, _EVENTS_, {})
           ,events = make[call](_events, type, [])
+          ,_args,_latched
       
       if(!typeOf(callback,'function')) {
         throw new TypeError('`#addEvent`\'s second argument must be a function') 
       }
+
       if(events.indexOf(callback) === -1) {
         _args = make[call](this,_ARGUMENTS_, {})
         _latched = make[call](this,_LATCHED_, {})
-        (_latched[type]) ? callback.apply(this,_args[type]) : events.push(callback)
+        _latched[type] ? callback.apply(this,_args[type]) : events.push(callback)
       }
       return this
     }

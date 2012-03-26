@@ -7,6 +7,7 @@ define( function (TemplateMixin) {
       ,forEach = ArrayProto.forEach
       ,slice = ArrayProto.slice
       ,toString = ObjectProto.toString
+      ,hasOwn = ObjectProto.hasOwnProperty
       
 
   function typeOf ( obj, type, is ) {
@@ -92,7 +93,8 @@ define( function (TemplateMixin) {
      *  getChildHtml(key) 
      */
     ,getChildHtml: function (key) {
-      return String(this.getChild(key))
+      var child = this.getChild(key)
+      return String(child || '')
     }
 
     /**

@@ -6,6 +6,7 @@ define(['./mixin','../template/mixin', '../mediator/mixin'],
       ,slice = ArrayProto.slice
       ,toString = ObjectProto.toString
       ,hasOwn = ObjectProto.hasOwnProperty
+      ,isArray = Array.isArray || function(it) { return typeOf(it,'array') }
 
   function typeOf (obj,type, is) {
     is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
@@ -32,63 +33,39 @@ define(['./mixin','../template/mixin', '../mediator/mixin'],
     return target
   }
 
-  function implement (key, value, retain){
-    var k
-    if (key === undef) return
-
-    if (typeOf(key,'object')) {
-      for ( k in key ) {
-        if (hasOwn.call(key,k)) {    
-          implement.call(this,k, key[k])
-        }
-      }  
-      return;
-    }
-
-    this[key] = typeOf( value, 'function') ? (retain) ? value : wrap(this, key, value) : value
-     
-    return this;
-  }
-
-  function wrap (self, key, method){
-    function wrapper () {
-      var  caller = this.caller 
-          ,current = this.$caller
-          ,result
-
-      this.caller = current 
-      this.$caller = wrapper
-      result = method.apply(this, arguments)
-      this.$caller = current
-      this.caller = caller
-      
-      return result
-    }
-
-    wrapper.$parent = self[key]
-    wrapper.$name = key
-      
-    return wrapper
-  }
-
   /** @constructor */
   function Block (options) {
-    this.options = {}
+    this.options = {
+      ready: ['template:ready', function () {
+        this.setContext(this.options.context)
+        this.setContext('$this',this)
+        this.bindTemplate()
+        this.fillContainer()
+        this.ready = true
+      }]
+    };
+
     this.setOptions(options)
-    this.initialize()
+    this.initialize(this.options)
   }
   Block.prototype = extend({
+    
     initialize: function (options) {
-      options = options || this.options
-      var  self = this
-          ,container = options.container
+      this.readyReady(options.ready)
       this.setChildren(options.children)
-      this.setTemplate(options.template)
       this.setContainer(options.container)
-      this.setContext(options.context)
-      this.setContext('$this',this)
-      this.bindTemplate() 
-      this.ready = true
+      this.setTemplate(options.template)
+    }
+
+    /**
+     *
+     *
+     *
+     */
+    ,readyReady: function (args) {
+      args = isArray(args) ? args : slice.call(arguments,0)
+      var callback = args.pop()
+      this.addEvent(args,'module:ready',callback.bind(this))
     }
 
     /**
@@ -130,3 +107,45 @@ define(['./mixin','../template/mixin', '../mediator/mixin'],
   return Block;
     
 });
+
+
+
+
+  // function implement (key, value, retain){
+  //   var k
+  //   if (key === undef) return
+
+  //   if (typeOf(key,'object')) {
+  //     for ( k in key ) {
+  //       if (hasOwn.call(key,k)) {    
+  //         implement.call(this,k, key[k])
+  //       }
+  //     }  
+  //     return;
+  //   }
+
+  //   this[key] = typeOf( value, 'function') ? (retain) ? value : wrap(this, key, value) : value
+     
+  //   return this;
+  // }
+
+  // function wrap (self, key, method){
+  //   function wrapper () {
+  //     var  caller = this.caller 
+  //         ,current = this.$caller
+  //         ,result
+
+  //     this.caller = current 
+  //     this.$caller = wrapper
+  //     result = method.apply(this, arguments)
+  //     this.$caller = current
+  //     this.caller = caller
+      
+  //     return result
+  //   }
+
+  //   wrapper.$parent = self[key]
+  //   wrapper.$name = key
+      
+  //   return wrapper
+  // }

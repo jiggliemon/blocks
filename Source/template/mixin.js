@@ -4,22 +4,30 @@ define( function () {
       ,op = Object.prototype
       ,ap = Array.prototype
       ,slice = ap.slice
-      ,isArray = Array.isArray || function(it) { return typeOf(it) === 'array' }
+      ,isArray = Array.isArray || function(it) { return typeOf(it,'array') }
       ,toString = op.toString
       ,hasOwn = op.hasOwnProperty
   
   function isPath ( str ) {
     if(!str) return !!0;
-    str = String(str)
+    str = String(str).trim()
 
+    // crude check for a dom node
     if(str.charAt(0) === '<') {
       return false
     }
+    
+    // Crude AMD check
+    if(/^te(xt|mplate)!/.test(str)) {
+      return true
+    }
+
+    // If still not decided, check for path elements
     return pathRegexp.test(str)
   }
 
-  function typeOf (obj,type) {
-    var is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+  function typeOf (obj, type, is) {
+    is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
     return type ? type === is : is
   }
 
@@ -143,7 +151,6 @@ define( function () {
 
       if(isPath(str)) {
         require([str],function (tmpl) {
-          console.log(tmpl)
           self._template = tmpl
           self.fireEvent && self.fireEvent('template:ready:latched',tmpl)
         })
