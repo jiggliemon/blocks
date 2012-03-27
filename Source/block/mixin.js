@@ -1,23 +1,6 @@
-define( function (TemplateMixin) {
+define(['../utilities'], function (utilities) {
   var  mixin
       ,blockCount = 0
-      ,ObjectProto = Object.prototype
-      ,ArrayProto = Array.prototype
-      ,isArray = Array.isArray || function(it) { return typeOf(it,'array') }
-      ,forEach = ArrayProto.forEach
-      ,slice = ArrayProto.slice
-      ,toString = ObjectProto.toString
-      ,hasOwn = ObjectProto.hasOwnProperty
-      
-
-  function typeOf ( obj, type, is ) {
-    is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
-    return type?type === is:is
-  }
-
-  function make ( key, value ) {
-    return this[key] = this[key] || value
-  }
 
   mixin = {
 
@@ -59,9 +42,8 @@ define( function (TemplateMixin) {
     ,setChildren: function (children) {
       if(!children) return
 
-      var key
-      for(key in children) {
-        if(hasOwn.call(children,key)) {
+      for(var key in children) {
+        if(utilities.hasOwn.call(children,key)) {
           this.setChild(key, children[key])
         }
       }
@@ -73,9 +55,9 @@ define( function (TemplateMixin) {
      *  getChildren(key [,...]) // { key: `Block` child }
      */
     ,getChildren: function (args) {
-      var  args = isArray('array') ? args : slice.call(arguments,0)
+      var  args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
           ,children
-          ,_children = make.call(this,'_children',{})
+          ,_children = utilities.make.call(this,'_children',{})
          
       if(arguments.length > 0) {
         children = {}
@@ -108,7 +90,7 @@ define( function (TemplateMixin) {
           ,key
 
       for(key in children) {
-        if(hasOwn.call(children, key)) {
+        if(utilities.hasOwn.call(children, key)) {
           str += String(children[key])
         }
       }
@@ -126,7 +108,7 @@ define( function (TemplateMixin) {
      *  
      */
     ,removeChildren: function (args) {
-      var  args = isArray(args) ? args : slice.call(arguments,0)
+      var  args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
           ,children = this.getChildren()
           ,subSet = {}
           ,rejected = {}
@@ -134,7 +116,7 @@ define( function (TemplateMixin) {
 
       if(args.length > 0) {
         for(key in children) {
-          if(hasOwn.call( children, key )){
+          if(utilities.hasOwn.call( children, key )){
             if(args.indexOf(key) === -1) {
               subSet[key] = children[key]
             } else {
@@ -169,7 +151,7 @@ define( function (TemplateMixin) {
       }
       this.clearBoundElements()
       bound = el.querySelectorAll('[bind]')
-      forEach.call(bound, function (el) {
+      utilities.forEach.call(bound, function (el) {
         self.setBoundElement(el.getAttribute('bind'),el)
       })
     }
@@ -185,7 +167,7 @@ define( function (TemplateMixin) {
       
       for(key in children) {
         placeholder = null
-        if(hasOwn.call( children, key )){
+        if(utilities.hasOwn.call( children, key )){
           module = children[key]
           placeholder = this.getBoundElement(module.getUniqueId())
           if(!!(placeholder)) {
@@ -204,7 +186,7 @@ define( function (TemplateMixin) {
      *
      */
     ,clearBoundElements: function (args) {
-      var  args = (typeOf(args) === 'array')? args : slice.call(arguments,0)
+      var  args = utilities.isArray(args)? args : utilities.slice.call(arguments,0)
           ,els = this.getBoundElements(args)
 
       this._bound = {}
@@ -216,7 +198,7 @@ define( function (TemplateMixin) {
      */
     ,setBoundElement: function (key, element) {
 
-      var  boundElements = make.call(this,'_bound',{})
+      var  boundElements = utilities.make.call(this,'_bound',{})
           ,bound = boundElements[key] = boundElements[key] || []
       bound.push(element)
     }
@@ -226,7 +208,7 @@ define( function (TemplateMixin) {
      *
      */
     ,getBoundElements: function (args) {
-      var  args = (typeOf(args) === 'array')? args : slice.call(arguments,0)
+      var  args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
           ,elements = {}
           ,self = this
       if (args.length) {
@@ -246,7 +228,7 @@ define( function (TemplateMixin) {
      */
     ,getBoundElement: function (key) {
       var  element
-          ,_bound = make.call(this,'_bound',{})
+          ,_bound = utilities.make.call(this,'_bound',{})
 
       if(!(element = _bound[key])){
         return undefined
@@ -301,11 +283,12 @@ define( function (TemplateMixin) {
       while(clone.children.length) {
         frag.appendChild(clone.children[0])
       }
-      
+
       this.bindChildren()
 
       if(this.placeholder) {
         this.placeholder.parentNode.replaceChild(frag, this.placeholder)
+        delete this.placeholder
       }
     }
 

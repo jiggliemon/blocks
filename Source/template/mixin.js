@@ -1,19 +1,15 @@
-define( function () {
+define(['../utilities'], function (utilities) {
   var  mixin
       ,pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
-      ,op = Object.prototype
-      ,ap = Array.prototype
-      ,slice = ap.slice
-      ,isArray = Array.isArray || function(it) { return typeOf(it,'array') }
-      ,toString = op.toString
-      ,hasOwn = op.hasOwnProperty
+
   
   function isPath ( str ) {
     if(!str) return !!0;
     str = String(str).trim()
 
-    // crude check for a dom node
-    if(str.charAt(0) === '<') {
+    // crude check for a dom node && multiple lines
+    // URL paths shoudln't have either
+    if(str.charAt(0) === '<' || /\n/.test(str)) {
       return false
     }
     
@@ -24,15 +20,6 @@ define( function () {
 
     // If still not decided, check for path elements
     return pathRegexp.test(str)
-  }
-
-  function typeOf (obj, type, is) {
-    is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
-    return type ? type === is : is
-  }
-
-  function make ( key, value ) {
-    return this[key] = this[key] || value
   }
 
   function escape (string) {
@@ -68,9 +55,9 @@ define( function () {
     ,setContext: function (key, value) {
       var context = this.getContext()
 
-      if (typeOf( key ) === 'object') {
+      if (utilities.typeOf( key,'object')) {
         for (var k in key) {
-          if (hasOwn.call(key,k)) {
+          if (utilities.hasOwn.call(key,k)) {
             this.setContext(k, key[k])
           }
         }
@@ -87,8 +74,8 @@ define( function () {
      *
      */ 
     ,getContext: function (args) {
-      var  args = isArray('array') ? args : slice.call(arguments,0)
-          ,context = make.call(this, '_context', {})
+      var  args = utilities.isArray('array') ? args : utilities.slice.call(arguments,0)
+          ,context = utilities.make.call(this, '_context', {})
 
       if(arguments.length > 0) {
         args.forEach(function (arg) {
@@ -104,9 +91,8 @@ define( function () {
      *
      */ 
     ,setTags: function ( tags) {
-      var key
-      for ( key in tags) {
-        if (hasOwn.call(tags,key)) {
+      for ( var key in tags) {
+        if (utilities.hasOwn.call(tags,key)) {
           this._templateTags[key] = tags[key]
         }
       }
@@ -176,12 +162,12 @@ define( function () {
      *
      */ 
     ,parseOperators: function () {
-      var key, operator
+      var key, operator, operators = this._templateOperators
 
-      for (key in this._templateOperators) {
-        if (this._templateOperators.hasOwnProperty(key)) {
-          operator = this._templateOperators[key]
-          if (typeof operator[0] === 'string') {
+      for (key in operators) {
+        if (utilities.hasOwn.call(operators, key)) {
+          operator = operators[key]
+          if (utilities.typeOf(operator[0], 'string')) {
             this.addOperator(key, operator[0], operator[1])
           }
         }
@@ -210,7 +196,7 @@ define( function () {
       // This will be part of a str.replace method
       // So the arguments should match those that you would use
       // for the .replace method on strings.
-      if (!typeOf(regexp, 'regexp')) { // todo: Fix Duck Typing for regexp
+      if (!utilities.typeOf(regexp, 'regexp')) { // todo: Fix Duck Typing for regexp
         regexp = new RegExp(this.getTag('open') + regexp + this.getTag('close'), 'g')
       }
       
@@ -231,10 +217,10 @@ define( function () {
           ,wrapper = ["with(__o){p.push('", "');}return p.join('');"]
           ,compiled = null
           ,template = this.getTemplate()
-          ,inner = (!template) ? "<b>No template</b>" : template.replace(/[\r\t\n]/g, " ")
+          ,inner = !template ? "<b>No template</b>" : template.replace(/[\r\t\n]/g, " ")
 
       for (key in operators) {
-        if (operators.hasOwnProperty(key)) {
+        if (utilities.hasOwn.call(operators,key)) {
           inner = inner.replace(operators[key][0], operators[key][1])
         }
       }

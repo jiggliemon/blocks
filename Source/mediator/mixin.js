@@ -1,24 +1,14 @@
-define(function () {
+define(['../utilities'], function (utilities) {
   var  REGEX = /:(latch(ed$)?)/i
       ,mixin
       ,call = 'call'
-      ,ArrayProto = Array.prototype
-      ,ObjectProto = Object.prototype
-      ,slice = ArrayProto.slice
-      ,toString = ObjectProto.toString
-      ,isArray = Array.isArray || function(it) { return typeOf(it,'array') }
       ,_EVENTS_ = '_events'
       ,_SWITCHED_ = '_switched'
       ,_LATCHED_ = '_latched'
       ,_ARGUMENTS_ = '_arguments'
-  
-  function typeOf (obj,type) {
-    var is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
-    return type?type === is:is
-  }
 
   function removeLatched(type){
-    var _latched = make[call](this,_LATCHED_, {})
+    var _latched = utilities.make[call](this,_LATCHED_, {})
     if(type.indexOf(':')){
       if(REGEX.test(type)){
         type = type.replace(REGEX,'')
@@ -28,23 +18,18 @@ define(function () {
     return type
   }
 
-  function make (key,value) {
-    var it = this[key] = this[key] || value
-    return it
-  }
-
   mixin = {
      getEvents: function(key){
-       var _events = make[call](this, _EVENTS_, {})
+       var _events = utilities.make[call](this, _EVENTS_, {})
           ,events = _events[type] 
 
-       return typeOf(key,'string') ? events ?events:[] : Object.keys(_events)
+       return utilities.typeOf(key,'string') ? events ?events:[] : Object.keys(_events)
     }
     
     ,addCompoundEvent: function (events, type, callback) {
       type = removeLatched[call](this,type)
       var  self = this
-          ,_switched = make[call](this,_SWITCHED_, {})
+          ,_switched = utilities.make[call](self,_SWITCHED_, {})
       
       
       events = events.map(function (event) {
@@ -62,51 +47,55 @@ define(function () {
       }
       
       if(callback){
-        this.addEvent(type, callback )
+        self.addEvent(type, callback )
       }
     } 
 
     ,addEvent: function(/* Sting */ type, /* Function */ callback){
-      if(isArray(type)) { 
+
+      if(utilities.isArray(type)) { 
         return this.addCompoundEvent.apply(this, arguments)
       }
       type = removeLatched[call](this,type)
       
-      var  _events = make[call](this, _EVENTS_, {})
-          ,events = make[call](_events, type, [])
+      var  self = this
+          ,_events = utilities.make[call](self, _EVENTS_, {})
+          ,events = utilities.make[call](_events, type, [])
           ,_args,_latched
       
-      if(!typeOf(callback,'function')) {
+      if(!utilities.typeOf(callback,'function')) {
         throw new TypeError('`#addEvent`\'s second argument must be a function') 
       }
 
       if(events.indexOf(callback) === -1) {
-        _args = make[call](this,_ARGUMENTS_, {})
-        _latched = make[call](this,_LATCHED_, {})
-        _latched[type] ? callback.apply(this,_args[type]) : events.push(callback)
+        _args = utilities.make[call](self,_ARGUMENTS_, {})
+        _latched = utilities.make[call](self,_LATCHED_, {})
+        _latched[type] ? callback.apply(self,_args[type]) : events.push(callback)
       }
-      return this
+      return self
     }
 
     ,addEvents: function(/* Object */ events){
+      var self = this
       for(var key in events){
-        if(events.hasOwnProperty(key)){
-          this.addEvent(key,events[key])
+        if(utilities.hasOwn(events, key)){
+          self.addEvent(key,events[key])
         }
       }
-      return this
+      return self
     }
     
     ,fireEvent: function(/* String */ type) {
       type = removeLatched[call](this,type)
-      var  _latched = make[call](this,_LATCHED_, {})
-          ,_switched = make[call](this,_SWITCHED_, {})
-          ,_args = make[call](this,_ARGUMENTS_, {})
-          ,_events = make[call](this, _EVENTS_, {})
+      var self = this
+          ,_latched = utilities.make[call](self,_LATCHED_, {})
+          ,_switched = utilities.make[call](self,_SWITCHED_, {})
+          ,_args = utilities.make[call](self,_ARGUMENTS_, {})
+          ,_events = utilities.make[call](self, _EVENTS_, {})
           ,isLatched = _latched[type]
           ,events = _events[type]
           ,length = events ? events.length : 0
-          ,args = slice[call](arguments,1)
+          ,args = utilities.slice[call](arguments,1)
           ,i = 0
       
       _switched[type] = 1
@@ -115,7 +104,7 @@ define(function () {
         for (; i < length; i++) {
           if (i in events) {
             try{
-              events[i].apply(this,args)
+              events[i].apply(self,args)
             } catch (e) { 
               throw new Error('Event Error - '+ type +':: '+ e)
             }
@@ -128,11 +117,11 @@ define(function () {
         delete events
       }
       
-      return this
+      return self
     }
 
     ,hasFired: function (key) {
-      var _switched = make[call](this,_SWITCHED_, {})
+      var _switched = utilities.make[call](this,_SWITCHED_, {})
       return _switched[key]?true:false
     }
   }
