@@ -57,7 +57,7 @@ define(['../utilities'], function (utilities) {
     ,getChildren: function (args) {
       var  args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
           ,children
-          ,_children = utilities.make.call(this,'_children',{})
+          ,_children = utilities.make(this,'_children',{})
          
       if(arguments.length > 0) {
         children = {}
@@ -108,8 +108,9 @@ define(['../utilities'], function (utilities) {
      *  
      */
     ,removeChildren: function (args) {
-      var  args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
-          ,children = this.getChildren()
+      args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
+      var self = this  
+          ,children = self.getChildren()
           ,subSet = {}
           ,rejected = {}
           ,key
@@ -124,7 +125,7 @@ define(['../utilities'], function (utilities) {
             }
           }
         }
-        this._children = subSet
+        self._children = subSet
       }
         
       return rejected
@@ -162,20 +163,21 @@ define(['../utilities'], function (utilities) {
      */
     ,bindChildren : function () {
       var children = this.getChildren()
-      var placeholder, module,parent
+      var placeholder, module, parent
       var placeholders = []
       
       for(key in children) {
         placeholder = null
         if(utilities.hasOwn.call( children, key )){
           module = children[key]
-          placeholder = this.getBoundElement(module.getUniqueId())
+          placeholder = this.getBoundElement(key)
           if(!!(placeholder)) {
-            parent = placeholder.parentNode
-            // Have to reference parent, or make sure it exists
-            // because it was throwing some weird
-            // `cannot call replaceChild on undefined` error
-            parent && parent.replaceChild(module.toElement(), placeholder)
+            placeholder.appendChild(module.toElement())
+            // parent = placeholder.parentNode
+            // // Have to reference parent, or make sure it exists
+            // // because it was throwing some weird
+            // // `cannot call replaceChild on undefined` error
+            // parent && parent.replaceChild(module.toElement(), placeholder)
           }
         }
       }
@@ -198,7 +200,7 @@ define(['../utilities'], function (utilities) {
      */
     ,setBoundElement: function (key, element) {
 
-      var  boundElements = utilities.make.call(this,'_bound',{})
+      var  boundElements = utilities.make(this,'_bound',{})
           ,bound = boundElements[key] = boundElements[key] || []
       bound.push(element)
     }
@@ -228,7 +230,7 @@ define(['../utilities'], function (utilities) {
      */
     ,getBoundElement: function (key) {
       var  element
-          ,_bound = utilities.make.call(this,'_bound',{})
+          ,_bound = utilities.make(this,'_bound',{})
 
       if(!(element = _bound[key])){
         return undefined
@@ -303,8 +305,9 @@ define(['../utilities'], function (utilities) {
       if(this.ready) {
         this.fillContainer(frag)
       } else {
-        this.placeholder = document.createElement('span')
-        frag.appendChild(this.placeholder)
+        var placeholder = this.placeholder = document.createElement('div')
+        placeholder.setAttribute('class','block-loading')
+        frag.appendChild(placeholder)
       }
       return frag
     }

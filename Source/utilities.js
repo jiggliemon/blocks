@@ -7,20 +7,28 @@
       ,isArray = Array.isArray || function(it) { return typeOf(it,'array') }
       ,forEach = ArrayProto.forEach
 
-  function typeOf (obj,type, is) {
+  function typeOf (obj,type,is) {
     is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
     return type ? type === is : is
   }
 
-  function make ( key, value ) {
-    return this[key] = this[key] || value
+  function make (context, key, value ) {
+    return context[key] = context[key] || value
   }
-
+  var inn = 0
+  setTimeout(function () {
+    console.log(inn)
+  }, 3000);
+  
   function extend () {
     var  target = arguments[0] || {}
         ,i = 1
         ,length = arguments.length
-        ,options, name, src, copy, copyIsArray, clone;
+        ,options, name, src, copy, copyIsArray, clone
+
+    
+    inn++
+    if(inn > 200) return
 
     if ( length <= 1 ) {
       throw new Error('`extend` requires at least two arguments.');
@@ -28,7 +36,7 @@
 
     // Handle case when target is a string or something (possible in deep copy)
     if ( typeof target !== "object" && typeof target !== 'function' ) {
-      target = {};
+      target = {}
     }
 
     for (; i < length; i++) {
@@ -37,30 +45,30 @@
         // Extend the base object
         for (name in options) {
           if(hasOwn.call(options,name)){
-            src = target[name];
-            copy = options[name];
+            src = target[name]
+            copy = options[name]
 
             // Prevent never-ending loop
             if ( target === copy ) {
-              continue;
+              continue
             }
 
             // Recurse if we're merging plain objects or arrays
             if ( copy && ( typeOf(copy,'object') || (copyIsArray = isArray(copy)))) {
               if ( copyIsArray ) {
-                copyIsArray = false;
-                clone = src && isArray(src) ? src : [];
+                copyIsArray = false
+                clone = src && isArray(src) ? src : []
 
               } else {
-                clone = src && typeOf(src,'object') ? src : {};
+                clone = src && typeOf(src,'object') ? src : {}
               }
 
               // Never move original objects, clone them
-              target[ name ] = extend(clone, copy);
+              target[ name ] = extend(clone, copy)
 
             // Don't bring in undefined values
             } else if ( copy !== undefined ) {
-              target[ name ] = copy;
+              target[ name ] = copy
             }
           }
         }
@@ -68,7 +76,7 @@
     }
 
     // Return the modified object
-    return target;
+    return target
   }
 
 define({

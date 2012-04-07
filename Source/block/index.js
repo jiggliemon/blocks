@@ -1,29 +1,60 @@
-define(['./mixin','../template/mixin', '../mediator/mixin','../utilities'], 
-  function ( BlockMixin, TemplateMixin, EventsMixin, utilities, undef ) {
+define(['blocks','./mixin','../template/mixin', '../mediator/mixin','../utilities'], 
+  function ( Blocks, BlockMixin, TemplateMixin, EventsMixin, utilities, undef ) {
 
+  function extend (obj) {
+    utilities.slice.call(arguments, 1).forEach(function(source){
+      for (var property in source) {
+        if (utilities.hasOwn.call(source,property)) {
+          // Commented out the deep extend portions
+          // if (source[property] && source[property].constructor && source[property].constructor === Object) {
+          //   obj[property] = obj[property] || {};
+          //   extend(obj[property], source[property]);
+          // } else {
+            obj[property] = source[property];
+          // }
+        }
+      }
+    })
+    return obj;
+  }
 
   /** @constructor */
-  function Block (options) {
-    this.options = {
-      ready: ['template:ready', function () {
-        this.setContext(this.options.context)
-        this.setContext('$this',this)
-        this.bindTemplate()
-        this.fillContainer()
-        this.ready = true
-      }]
-    };
-
-    this.setOptions(options)
-    this.initialize(this.options)
+  function Block (name,options) {
+    var self = this
+    if(!utilities.typeOf( name, 'string' ) && arguments.length == 1) {
+      options = name
+    }
+    self.key = name
+    self.setOptions(options)
+    self.initialize(self.options)
+    Blocks.register(name,self)
   }
-  Block.prototype = utilities.extend({
+
+
+  Block.prototype = extend({
     
-    initialize: function (options) {
-      this.readyReady(options.ready)
-      this.setChildren(options.children)
-      this.setContainer(options.container)
-      this.setTemplate(options.template)
+    defaults: {
+      onReady: ['template:ready', function blockReady () {
+        var self = this
+        self.ready = true
+        self.setContext(self.options.context)
+        self.setContext('block',self)
+        self.bindTemplate()
+        self.fillContainer()
+      }]
+    }
+
+    /**
+     *
+     *
+     *
+     */
+    ,initialize: function (options) {
+      var self = this
+      self.readyReady()
+      self.setChildren( options.children )
+      self.setContainer( options.container )
+      self.setTemplate( options.template )
     }
 
     /**
@@ -32,9 +63,17 @@ define(['./mixin','../template/mixin', '../mediator/mixin','../utilities'],
      *
      */
     ,readyReady: function (args) {
+      var self = this
+      if(!args && self.options.onReady) {
+        args = self.options.onReady
+      } else {
+        return
+      }
+      
       args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
+      // todo: wtf is going on in here
       var callback = args[args.length -1]
-      this.addEvent(args.slice(0,-1),'module:ready',callback.bind(this))
+      self.addEvent(args.slice(0,-1),'block:ready', callback.bind(self))
     }
 
     /**
@@ -42,23 +81,10 @@ define(['./mixin','../template/mixin', '../mediator/mixin','../utilities'],
      *
      */
      ,setOptions: function (options) {
-      _options = utilities.make.call(this,'options',{})
-      return (function (){
-        var  args = arguments
-            ,target = args[0]
-            ,key
-            ,i = 1
-            ,l = args.length
-            
-        for (; i < l; i++) {
-          for (key in args[i]) {
-            if(utilities.hasOwn.call(args[i], key)) {
-              target[key] = args[i][key]
-            }
-          }
-        }
-        return target
-      }(_options, options))
+      var self = this
+      _options = utilities.make(self,'options',{})
+      _defaults = utilities.make(self,'defaults',{})
+      return extend(_options, _defaults, options || {})
     } 
 
 

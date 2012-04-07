@@ -7,8 +7,12 @@ define(['../utilities'], function (utilities) {
       ,_LATCHED_ = '_latched'
       ,_ARGUMENTS_ = '_arguments'
 
+  function make (context,key,value) {
+    return context[key] = context[key] || value
+  }
+
   function removeLatched(type){
-    var _latched = utilities.make[call](this,_LATCHED_, {})
+    var _latched = make(this,_LATCHED_, {})
     if(type.indexOf(':')){
       if(REGEX.test(type)){
         type = type.replace(REGEX,'')
@@ -20,7 +24,7 @@ define(['../utilities'], function (utilities) {
 
   mixin = {
      getEvents: function(key){
-       var _events = utilities.make[call](this, _EVENTS_, {})
+       var _events = make(this, _EVENTS_, {})
           ,events = _events[type] 
 
        return utilities.typeOf(key,'string') ? events ?events:[] : Object.keys(_events)
@@ -29,7 +33,7 @@ define(['../utilities'], function (utilities) {
     ,addCompoundEvent: function (events, type, callback) {
       type = removeLatched[call](this,type)
       var  self = this
-          ,_switched = utilities.make[call](self,_SWITCHED_, {})
+          ,_switched = make(self,_SWITCHED_, {})
       
       
       events = events.map(function (event) {
@@ -59,8 +63,8 @@ define(['../utilities'], function (utilities) {
       type = removeLatched[call](this,type)
       
       var  self = this
-          ,_events = utilities.make[call](self, _EVENTS_, {})
-          ,events = utilities.make[call](_events, type, [])
+          ,_events = make(self, _EVENTS_, {})
+          ,events = make(_events, type, [])
           ,_args,_latched
       
       if(!utilities.typeOf(callback,'function')) {
@@ -68,8 +72,8 @@ define(['../utilities'], function (utilities) {
       }
 
       if(events.indexOf(callback) === -1) {
-        _args = utilities.make[call](self,_ARGUMENTS_, {})
-        _latched = utilities.make[call](self,_LATCHED_, {})
+        _args = make(self,_ARGUMENTS_, {})
+        _latched = make(self,_LATCHED_, {})
         _latched[type] ? callback.apply(self,_args[type]) : events.push(callback)
       }
       return self
@@ -88,10 +92,10 @@ define(['../utilities'], function (utilities) {
     ,fireEvent: function(/* String */ type) {
       type = removeLatched[call](this,type)
       var self = this
-          ,_latched = utilities.make[call](self,_LATCHED_, {})
-          ,_switched = utilities.make[call](self,_SWITCHED_, {})
-          ,_args = utilities.make[call](self,_ARGUMENTS_, {})
-          ,_events = utilities.make[call](self, _EVENTS_, {})
+          ,_latched = make(self,_LATCHED_, {})
+          ,_switched = make(self,_SWITCHED_, {})
+          ,_args = make(self,_ARGUMENTS_, {})
+          ,_events = make(self, _EVENTS_, {})
           ,isLatched = _latched[type]
           ,events = _events[type]
           ,length = events ? events.length : 0
@@ -121,7 +125,7 @@ define(['../utilities'], function (utilities) {
     }
 
     ,hasFired: function (key) {
-      var _switched = utilities.make[call](this,_SWITCHED_, {})
+      var _switched = make(this,_SWITCHED_, {})
       return _switched[key]?true:false
     }
   }

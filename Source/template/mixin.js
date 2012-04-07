@@ -53,19 +53,20 @@ define(['../utilities'], function (utilities) {
      *
      */ 
     ,setContext: function (key, value) {
-      var context = this.getContext()
+      var  self = this
+          ,context = self.getContext()
 
       if (utilities.typeOf( key,'object')) {
         for (var k in key) {
           if (utilities.hasOwn.call(key,k)) {
-            this.setContext(k, key[k])
+            self.setContext(k, key[k])
           }
         }
         return;
       }
 
       context[key] = value
-      return this
+      return self
     }
 
     /**
@@ -75,7 +76,7 @@ define(['../utilities'], function (utilities) {
      */ 
     ,getContext: function (args) {
       var  args = utilities.isArray('array') ? args : utilities.slice.call(arguments,0)
-          ,context = utilities.make.call(this, '_context', {})
+          ,context = utilities.make(this, '_context', {})
 
       if(arguments.length > 0) {
         args.forEach(function (arg) {
@@ -133,6 +134,7 @@ define(['../utilities'], function (utilities) {
      *
      */ 
     ,setTemplate: function ( /* String */ str) {
+      str = String(str).trim()
       var self = this;
 
       if(isPath(str)) {
@@ -141,8 +143,8 @@ define(['../utilities'], function (utilities) {
           self.fireEvent && self.fireEvent('template:ready:latched',tmpl)
         })
       } else {
-        this._template = str
-        this.fireEvent && this.fireEvent('template:ready:latched',str)
+        self._template = str
+        self.fireEvent && self.fireEvent('template:ready:latched',str)
       }
 
     }
@@ -180,10 +182,11 @@ define(['../utilities'], function (utilities) {
      *
      */ 
     ,getOperators: function () {
-      if (!this._operatorsParsed) {
-        this.parseOperators()
+      var self = this
+      if (!self._operatorsParsed) {
+        self.parseOperators()
       }
-      return this._templateOperators
+      return self._templateOperators
     }
 
     /**
@@ -192,15 +195,15 @@ define(['../utilities'], function (utilities) {
      *
      */ 
     ,addOperator: function ( /* String */ name, /* || String */ regexp, /* Function || String */ fn) {
-
+      var self = this
       // This will be part of a str.replace method
       // So the arguments should match those that you would use
       // for the .replace method on strings.
       if (!utilities.typeOf(regexp, 'regexp')) { // todo: Fix Duck Typing for regexp
-        regexp = new RegExp(this.getTag('open') + regexp + this.getTag('close'), 'g')
+        regexp = new RegExp(self.getTag('open') + regexp + self.getTag('close'), 'g')
       }
       
-      this._templateOperators[name] = [regexp, fn]
+      self._templateOperators[name] = [regexp, fn]
     }
 
     /**
@@ -210,7 +213,8 @@ define(['../utilities'], function (utilities) {
      */ 
     ,compile: function ( /* Object */ data) {
       data = data || this._context;
-      var  open = this.getTag('open')
+      var  self = this
+          ,open = this.getTag('open')
           ,close = this.getTag('close')
           ,operators = this.getOperators()
           ,key, body, head = 'var p=[],print=function(){p.push.apply(p,arguments);};'

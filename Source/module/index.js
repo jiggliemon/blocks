@@ -4,7 +4,7 @@ define(['./mixin','../block/mixin','../template/mixin','../mediator/mixin','../u
   var  Module
       ,ModuleProto
 
-  function implement (key, value, retain){
+  function implement (key, value, retain, undef){
     var k
     if (key === undef) return
 
@@ -53,9 +53,23 @@ define(['./mixin','../block/mixin','../template/mixin','../mediator/mixin','../u
 
     function Module () {
       implement.call(this,methods)
-      return (this.initialize) ? this.initialize.apply(this, arguments) : this;
+      this.initialize && this.initialize.apply(this, arguments)
     }
-    Module.prototype = utilities.extend({}, ModuleMixin, BlockMixin, TemplateMixin, MediatorMixin )
+
+    Module.prototype = utilities.extend({
+      /**
+       *
+       *
+       */
+       parent: function (){
+        var  name = this.$caller.$name
+            ,parent = this.$caller.$parent
+        if (!parent) {
+          throw new Error('The method "' + name + '" has no parent.')
+        }
+        return parent.apply(this, arguments)
+      }
+    }, ModuleMixin, BlockMixin, TemplateMixin, MediatorMixin )
 
     return Module
   }
