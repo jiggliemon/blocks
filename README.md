@@ -1,15 +1,18 @@
 # Blocks.js
 
-```  
+``` js
 var  Layout = require('blocks/layout')
     ,Block = require('blocks/block')
-    
-new Layout('/', new Block({
+
+// define a route for when to show the root block
+new Layout('/', new Block('root', {
    template: '\
-    <header><%= getChild("header") %></header>\
-    <section><%= getChild("body") %></section>\
-    <footer><%= getChild("footer") %></footer>\
+    <header children="header"></header>\
+    <section children="body"></section>\
+    <footer children="footer"></footer>\
   '
+
+  // define the blocks children
   ,children: {
      header: new Block({
      	template: 'path/to/header/template.tmpl'
@@ -32,5 +35,7 @@ new Layout('/', new Block({
     	template: 'path/to/footer/template.tmpl'
     })
   }
+
+// define where the block should be places in the document
 }, document.getElementById('container'));  
 ```

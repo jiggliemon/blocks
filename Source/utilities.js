@@ -15,20 +15,12 @@
   function make (context, key, value ) {
     return context[key] = context[key] || value
   }
-  var inn = 0
-  setTimeout(function () {
-    console.log(inn)
-  }, 3000);
   
   function extend () {
     var  target = arguments[0] || {}
         ,i = 1
         ,length = arguments.length
         ,options, name, src, copy, copyIsArray, clone
-
-    
-    inn++
-    if(inn > 200) return
 
     if ( length <= 1 ) {
       throw new Error('`extend` requires at least two arguments.');

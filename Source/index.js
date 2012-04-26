@@ -1,10 +1,16 @@
 
-define([],function (){
+define(['./block'],function (Block){
   var blocks = {}
 
   return {
-    register: function (key,block) {
-      if(blocks[key]) throw new Error('A block w/ this name already exists')
+     create: function () {
+      return Block.apply(this, arguments)
+    }
+    ,register: function (key,block) {
+      if(blocks[key]) {
+        throw new Error('A block with the name `'+ key +'` already exists')
+      }
+
       blocks[key] = block
     }
     ,refrence: function (key) {

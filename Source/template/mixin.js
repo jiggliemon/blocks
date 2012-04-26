@@ -1,7 +1,6 @@
 define(['../utilities'], function (utilities) {
   var  mixin
       ,pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
-
   
   function isPath ( str ) {
     if(!str) return !!0;
@@ -55,14 +54,15 @@ define(['../utilities'], function (utilities) {
     ,setContext: function (key, value) {
       var  self = this
           ,context = self.getContext()
+          ,k
 
-      if (utilities.typeOf( key,'object')) {
-        for (var k in key) {
+      if (utilities.typeOf( key, 'object')) {
+        for (k in key) {
           if (utilities.hasOwn.call(key,k)) {
             self.setContext(k, key[k])
           }
         }
-        return;
+        return
       }
 
       context[key] = value
@@ -83,6 +83,7 @@ define(['../utilities'], function (utilities) {
           context[arg] = this._context[arg]
         })
       }
+
       return context
     }
     
@@ -94,7 +95,7 @@ define(['../utilities'], function (utilities) {
     ,setTags: function ( tags) {
       for ( var key in tags) {
         if (utilities.hasOwn.call(tags,key)) {
-          this._templateTags[key] = tags[key]
+          this.setTag(key,tags[key])
         }
       }
 
@@ -107,7 +108,9 @@ define(['../utilities'], function (utilities) {
      *
      */ 
     ,setTag: function( tag, str) {
-      this._templateTags[tag] = str
+      this._templateTags[tag] = String(str).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+
+      return this
     }
 
     /**
@@ -134,17 +137,19 @@ define(['../utilities'], function (utilities) {
      *
      */ 
     ,setTemplate: function ( /* String */ str) {
-      str = String(str).trim()
+      str = String(str).trim().replace(/\\?'/g,"\\'")
+      if(!str) return
+
       var self = this;
 
       if(isPath(str)) {
         require([str],function (tmpl) {
-          self._template = tmpl
-          self.fireEvent && self.fireEvent('template:ready:latched',tmpl)
+          self._template = String(tmpl).trim().replace(/\\?'/g,"\\'")
+          self.fireEvent && self.fireEvent('template:ready:latched', self._template)
         })
       } else {
         self._template = str
-        self.fireEvent && self.fireEvent('template:ready:latched',str)
+        self.fireEvent && self.fireEvent('template:ready:latched', str)
       }
 
     }

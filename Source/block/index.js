@@ -20,14 +20,20 @@ define(['blocks','./mixin','../template/mixin', '../mediator/mixin','../utilitie
 
   /** @constructor */
   function Block (name,options) {
+    if (!(this instanceof Block)) {
+      return new Block(name, options)
+    }
+    
     var self = this
     if(!utilities.typeOf( name, 'string' ) && arguments.length == 1) {
       options = name
+    } else {
+      self.key = name
+      Blocks.register(name,self)
     }
-    self.key = name
+
     self.setOptions(options)
     self.initialize(self.options)
-    Blocks.register(name,self)
   }
 
 
