@@ -1,0 +1,28 @@
+{
+  "name": "blocks",
+  "description": "Builds modules like lego blocks.",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "bin": {},
+  "keywords": [
+    "blocks",
+    "block",
+    "layout"
+  ],
+  "homepage": "https://github.com/jiggliemon/blocks",
+  "author": "Chase Wilson <@jiggliemon> (http://agroism.com)",
+  "bugs": {
+    "url": "https://github.com/jiggliemon/blocks/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jiggliemon/blocks.git"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}

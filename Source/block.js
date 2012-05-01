@@ -1,1 +1,0 @@
-define(['./block/index'], function (i) {return i});
