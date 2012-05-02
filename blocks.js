@@ -7,8 +7,15 @@
             modules[id].call(exports, require, module, exports, window);
         }
         return module.exports;
+    }, map = {
+        blocks: "0",
+        "blocks/block": "1"
+    };
+    window["wrup"] = function(id) {
+        return (id = map[id]) ? require(id) : null;
     };
     window["blocks"] = require("0");
+    window["blocks/block"] = require("1");
 })({
     "0": function(require, module, exports, global) {
         var Block = require("1");
@@ -29,10 +36,7 @@
         };
     },
     "1": function(require, module, exports, global) {
-        var BlockMixin = require("2");
-        var TemplateMixin = require("4");
-        var MediatorMixin = require("5");
-        var utilities = require("3");
+        var BlockMixin = require("2"), TemplateMixin = require("4"), MediatorMixin = require("5"), utilities = require("3");
         function extend(obj) {
             utilities.slice.call(arguments, 1).forEach(function(source) {
                 for (var property in source) {
@@ -310,7 +314,7 @@
             }
             return target;
         }
-        modules.exports = {
+        module.exports = {
             isArray: isArray,
             hasOwn: hasOwn,
             toString: toString,
