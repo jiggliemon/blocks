@@ -1,4 +1,6 @@
-// @ sourceURL = ./blocks/template/mixin.js
+define(['../utilities'], function (
+  utilities
+){
 
 function isPath ( str ) {
   if(!str) return !!0;
@@ -29,8 +31,7 @@ function escape (string) {
     .replace(/\//g, '&#x2F;')
 }
 
-var utilities = require('../utilities')
-  , pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
+var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
   , mixin  = {
    _templateTags: {
      open: '<%'
@@ -253,5 +254,6 @@ var utilities = require('../utilities')
   }
 }
 
-module.exports = mixin
-// @ sourceURL = ./blocks/template/index.js
+return mixin
+
+})

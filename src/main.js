@@ -1,12 +1,12 @@
 define(['./block/index','./layout/index'], 
-function (block){
+function (Block, Layout){
   var constructors = {
-     block: require('./block/index')
-    ,layout: require('./layout/index')
+     block: Block
+    ,layout: Layout
   }
   , blocks = {} 
 
-  return =  {
+  return {
      create: function (name) {
       return constructors[name] && constructors[name].apply(this, [].slice.call(arguments, 1))
     }

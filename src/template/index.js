@@ -1,6 +1,7 @@
-define(['./mixin', '../utilities'], function () {
-var TemplateMixin = require('./mixin')
-  , utilities = require('../utilities')
+define(['./mixin', '../utilities'], function (
+   TemplateMixin
+  ,utilities
+) {
 
 function Template (config) {
   config = config || {}

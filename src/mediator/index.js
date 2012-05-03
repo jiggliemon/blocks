@@ -1,7 +1,8 @@
 define(['./mixin','../utilities'], 
-function(){
-var EventsMixin = require('./mixin')
-  , utilities = require('../utilities')
+function(
+   MediatorMixin
+  ,utilities
+){
 
 function Mediator (){
   var self = this
@@ -10,7 +11,7 @@ function Mediator (){
   self._arguments = {};
   self._switched = {};
 }
-Mediator.prototype = utilities.extend({},EventsMixin)
+Mediator.prototype = utilities.extend({}, MediatorMixin)
 
 return Mediator;
 })

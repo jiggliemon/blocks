@@ -1,19 +1,29 @@
-define(['../utilities'], 
-function(){
+define(['../utilities'], function(
+  utilities
+) {
   
-var utilities = require('../utilities')
-  , blockCount = 0
+var blockCount = 0
   , mixin = {
 
   /**
-   *  #setChild
+   *  Block#setChild
+   *  todo: Allow you to place where in the array you place the child
    *
    *  @param {string} key The childs name
    *  @param {block} value  
    */
-   setChild: function (key, value) {
-    if(key == undefined) return
-    this.getChildren()[key] = value
+   setChild: function (key, value /*, where */) {
+    if(key == undefined || value == undefined) return
+
+    var child = utilities.make( this.getChildren(), key, [])
+    if(utilities.isArray(value)){
+      value.forEach(function(ardvark){
+        child.push(ardvark)
+      })
+    } else {
+      child.push(value)
+    }
+    
   }
 
 
@@ -44,7 +54,7 @@ var utilities = require('../utilities')
     if(!children) return
 
     for(var key in children) {
-      if(utilities.hasOwn.call(children,key)) {
+      if(utilities.hasOwn(children,key)) {
         this.setChild(key, children[key])
       }
     }
@@ -56,7 +66,7 @@ var utilities = require('../utilities')
    *  getChildren(key [,...]) // { key: `Block` child }
    */
   ,getChildren: function (args) {
-    var  args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
+    var  args = utilities.isArray(args) ? args : utilities.slice(arguments,0)
         ,children
         ,_children = utilities.make(this,'_children',{})
        
@@ -109,7 +119,7 @@ var utilities = require('../utilities')
    *  
    */
   ,removeChildren: function (args) {
-    args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
+    args = utilities.isArray(args) ? args : utilities.slice(arguments,0)
     var self = this  
       , children = self.getChildren()
       , subSet = {}
@@ -118,7 +128,7 @@ var utilities = require('../utilities')
 
     if(args.length > 0) {
       for(key in children) {
-        if(utilities.hasOwn.call( children, key )){
+        if(utilities.hasOwn( children, key )){
           if(args.indexOf(key) === -1) {
             subSet[key] = children[key]
           } else {
@@ -153,7 +163,8 @@ var utilities = require('../utilities')
     }
     this.clearBoundElements()
     bound = el.querySelectorAll('[bind]')
-    utilities.forEach.call(bound, function (el) {
+
+    utilities.forEach(bound, function (el) {
       self.setBoundElement(el.getAttribute('bind'),el)
     })
   }
@@ -163,7 +174,8 @@ var utilities = require('../utilities')
    *
    */
   ,bindChildren : function () {
-    var children = this.getChildren()
+    var self = this
+      , children = self.getChildren()
       , placeholder
       , module
       , parent
@@ -171,16 +183,13 @@ var utilities = require('../utilities')
     
     for(key in children) {
       placeholder = null
-      if(utilities.hasOwn.call( children, key )){
-        module = children[key]
-        placeholder = this.getBoundElement(key)
-        if(!!(placeholder)) {
-          placeholder.appendChild(module.toElement())
-          // parent = placeholder.parentNode
-          // // Have to reference parent, or make sure it exists
-          // // because it was throwing some weird
-          // // `cannot call replaceChild on undefined` error
-          // parent && parent.replaceChild(module.toElement(), placeholder)
+      if(utilities.hasOwn( children, key )){
+        modules = children[key]
+        placeholder = self.getBoundElement(key)
+        if(!!(placeholder) && utilities.isArray(modules) && modules.length > 0) {
+          modules.forEach(function( module ){
+            placeholder.appendChild(module.toElement())
+          })
         }
       }
     }
@@ -191,7 +200,7 @@ var utilities = require('../utilities')
    *
    */
   ,clearBoundElements: function (args) {
-    var args = utilities.isArray(args)? args : utilities.slice.call(arguments,0)
+    var args = utilities.isArray(args)? args : utilities.slice(arguments,0)
       , els = this.getBoundElements(args)
 
     this._bound = {}
@@ -213,7 +222,7 @@ var utilities = require('../utilities')
    *
    */
   ,getBoundElements: function (args) {
-    var args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
+    var args = utilities.isArray(args) ? args : utilities.slice(arguments,0)
       , elements = {}
       , self = this
     if (args.length) {
@@ -280,22 +289,23 @@ var utilities = require('../utilities')
   }
 
   ,fillContainer: function (frag) {
-    var  container = this.getContainer()
+    var  self = this
+        ,container = self.getContainer()
         ,clone = container.cloneNode(true)
         ,frag = frag || document.createDocumentFragment()
-    
-    this.bindElements(clone)
-    this.attachEvents && this.attachEvents()
-    
+    self.bindElements(clone)
+    self.attachEvents && self.attachEvents()
+
     while(clone.children.length) {
       frag.appendChild(clone.children[0])
     }
 
-    this.bindChildren()
+    self.bindChildren()
 
-    if(this.placeholder) {
-      this.placeholder.parentNode.replaceChild(frag, this.placeholder)
-      delete this.placeholder
+
+    if(self.placeholder) {
+      self.placeholder.parentNode.replaceChild(frag, self.placeholder)
+      delete self.placeholder
     }
   }
 

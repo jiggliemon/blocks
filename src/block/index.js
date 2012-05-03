@@ -1,15 +1,21 @@
-define(['./mixin','../template/mixin','../mediator/mixin','../utilities'], 
-function (){
+define(['blocks','./mixin','../template/mixin','../mediator/mixin','../utilities'], function (
+   Blocks
+  ,BlockMixin
+  ,TemplateMixin
+  ,MediatorMixin
+  ,utilities
+) {
 
-var BlockMixin = require('./mixin')
-  , TemplateMixin = require('../template/mixin')
-  , MediatorMixin = require('../mediator/mixin')
-  , utilities = require('../utilities')
-
+// var BlockMixin = require('./mixin')
+//   , TemplateMixin = require('../template/mixin')
+//   , MediatorMixin = require('../mediator/mixin')
+//   , utilities = require('../utilities')
+console.log(Blocks)
 function extend (obj) {
-  utilities.slice.call(arguments, 1).forEach(function(source){
+  utilities.slice(arguments, 1).forEach(function(source){
+
     for (var property in source) {
-      if (utilities.hasOwn.call(source,property)) {
+      if (utilities.hasOwn(source,property)) {
         // Commented out the deep extend portions
         // if (source[property] && source[property].constructor && source[property].constructor === Object) {
         //   obj[property] = obj[property] || {};
@@ -34,7 +40,9 @@ function Block (name,options) {
     options = name
   } else {
     self.key = name
-    Blocks.register(name,self)
+    try{
+      Blocks.register(name,self)
+    } catch (e) {}
   }
 
   self.setOptions(options)
@@ -102,4 +110,5 @@ Block.prototype = extend({
 }, TemplateMixin, MediatorMixin, BlockMixin )
 
 return Block
+
 })

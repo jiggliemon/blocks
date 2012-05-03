@@ -1,25 +1,25 @@
-define(['../utilities'], function (){
-var utilities = require('../utilities')
-  , REGEX = /:(latch(ed$)?)/i
-  , mixin
+define(['../utilities'], function (
+  utilities
+) {
+
+function removeLatched(type){
+  var _latched = utilities.make(this,_LATCHED_, {})
+  if(type.indexOf(':')){
+    if(REGEX.test(type)){
+      type = type.replace(REGEX,'')
+      _latched[type] = 1
+    }
+  }
+  return type
+}
+
+var REGEX = /:(latch(ed$)?)/i
   , call = 'call'
   , _EVENTS_ = '_events'
   , _SWITCHED_ = '_switched'
   , _LATCHED_ = '_latched'
   , _ARGUMENTS_ = '_arguments'
-
-  function removeLatched(type){
-    var _latched = utilities.make(this,_LATCHED_, {})
-    if(type.indexOf(':')){
-      if(REGEX.test(type)){
-        type = type.replace(REGEX,'')
-        _latched[type] = 1
-      }
-    }
-    return type
-  }
-
-  mixin = {
+  , mixin = {
     
      getEvents: function(key){
        var _events = utilities.make(this, _EVENTS_, {})
@@ -108,7 +108,7 @@ var utilities = require('../utilities')
             try{
               events[i].apply(self,args)
             } catch (e) { 
-              throw new Error('Event Error - '+ type +':: '+ e)
+              throw new Error('Problem with the `'+ type +'` event \n'+ e)
             }
           }
         }
