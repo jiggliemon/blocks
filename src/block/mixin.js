@@ -16,12 +16,21 @@ var blockCount = 0
     if(key == undefined || value == undefined) return
 
     var child = utilities.make( this.getChildren(), key, [])
+      , el = this.getBoundElement(key)
+
     if(utilities.isArray(value)){
       value.forEach(function(ardvark){
         child.push(ardvark)
+        if (el) {
+          el.appendChild(ardvark.toElement())
+        }
       })
+      return self
     } else {
       child.push(value)
+      if (el) {
+        el.appendChild(value.toElement())
+      }
     }
     
   }
@@ -132,7 +141,8 @@ var blockCount = 0
           if(args.indexOf(key) === -1) {
             subSet[key] = children[key]
           } else {
-            rejected[key] = children[key]       
+            rejected[key] = children[key] 
+            self.emptyChildNode(key)      
           }
         }
       }
@@ -141,7 +151,27 @@ var blockCount = 0
       
     return rejected
   }
+
+  /**
+   *  Blocks#emptyChildNode
+   *  This removes the children of a block placeholder;
+   *  it doesn't remove the children from the block, it only 
+   *  manipulates the node
+   */
+  ,emptyChildNode: function (key) {
+    var el = this.getBoundElement(key)
+    if (el && el.children.length) {
+      [].forEach.call(el.children, function (child) {
+        el.removeChild(child)
+        delete child
+      })
+    }
+  }
   
+  /**
+   *
+   *
+   */
   ,bindTemplate: function () {
     var  blank = document.createElement('div')
         ,container = this.getContainer()
@@ -154,6 +184,10 @@ var blockCount = 0
     }
   }
   
+  /**
+   *
+   *
+   */
   ,bindElements: function (el) {
     var  self = this
         ,bound
@@ -161,11 +195,16 @@ var blockCount = 0
     if(!(el instanceof Element)) {
       throw new Error(Block.errors.parseElements[0])
     }
-    this.clearBoundElements()
-    bound = el.querySelectorAll('[bind]')
+    self.clearBoundElements()
+    bound = el.querySelectorAll('[bind], block, b[name]')
 
     utilities.forEach(bound, function (el) {
-      self.setBoundElement(el.getAttribute('bind'),el)
+      var key = el.getAttribute('bind')
+        , tagName = el.tagName.toLowerCase()
+      if(!key && ((tagName === 'block') || (tagName === 'b'))) {
+        key = el.getAttribute('name')
+      }
+      self.setBoundElement(key,el)
     })
   }
   
@@ -288,6 +327,10 @@ var blockCount = 0
     return '<span bind="'+ this.getUniqueId() +'" data-type="module"></span>'
   }
 
+  /**
+   *
+   *
+   */
   ,fillContainer: function (frag) {
     var  self = this
         ,container = self.getContainer()

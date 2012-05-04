@@ -10,7 +10,7 @@ define(['blocks','./mixin','../template/mixin','../mediator/mixin','../utilities
 //   , TemplateMixin = require('../template/mixin')
 //   , MediatorMixin = require('../mediator/mixin')
 //   , utilities = require('../utilities')
-console.log(Blocks)
+
 function extend (obj) {
   utilities.slice(arguments, 1).forEach(function(source){
 
@@ -41,6 +41,7 @@ function Block (name,options) {
   } else {
     self.key = name
     try{
+      console.log(Blocks)
       Blocks.register(name,self)
     } catch (e) {}
   }
@@ -71,6 +72,10 @@ Block.prototype = extend({
   ,initialize: function (options) {
     var self = this
     self.readyReady()
+
+    if(options.attachEvents) {
+      self.attachEvents = options.attachEvents
+    }
     self.setChildren( options.children )
     self.setContainer( options.container )
     self.setTemplate( options.template )

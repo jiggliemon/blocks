@@ -59,7 +59,7 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
 
     if (utilities.typeOf( key, 'object')) {
       for (k in key) {
-        if (utilities.hasOwn.call(key,k)) {
+        if (utilities.hasOwn(key,k)) {
           self.setContext(k, key[k])
         }
       }
@@ -76,7 +76,7 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
    *
    */ 
   ,getContext: function (args) {
-    var  args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
+    var  args = utilities.isArray(args) ? args : utilities.slice(arguments,0)
         ,context = utilities.make(this, '_context', {})
 
     if(arguments.length > 0) {
@@ -173,7 +173,7 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
     var key, operator, operators = this._templateOperators
 
     for (key in operators) {
-      if (utilities.hasOwn.call(operators, key)) {
+      if (utilities.hasOwn(operators, key)) {
         operator = operators[key]
         if (utilities.typeOf(operator[0], 'string')) {
           this.addOperator(key, operator[0], operator[1])
@@ -230,7 +230,7 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
         ,inner = !template ? "<b>No template</b>" : template.replace(/[\r\t\n]/g, " ")
 
     for (key in operators) {
-      if (utilities.hasOwn.call(operators,key)) {
+      if (utilities.hasOwn(operators,key)) {
         inner = inner.replace(operators[key][0], operators[key][1])
       }
     }
