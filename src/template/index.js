@@ -1,3 +1,4 @@
+//@ sourceURL = blocks/template/index.js
 define(['./mixin', '../utilities'], function (
    TemplateMixin
   ,utilities
@@ -18,3 +19,4 @@ Template.prototype = utilities.extend({}, TemplateMixin)
 return Template
 
 })
+//@ sourceURL = blocks/template/index.js

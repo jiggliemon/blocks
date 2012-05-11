@@ -1,3 +1,4 @@
+//@ sourceURL = blocks/mediator/index.js
 define(['./mixin','../utilities'], 
 function(
    MediatorMixin
@@ -15,3 +16,4 @@ Mediator.prototype = utilities.extend({}, MediatorMixin)
 
 return Mediator;
 })
+//@ sourceURL = blocks/mediator/index.js

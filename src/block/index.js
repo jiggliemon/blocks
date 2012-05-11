@@ -1,3 +1,4 @@
+//@ sourceURL = blocks/block/index.js
 define(['blocks','./mixin','../template/mixin','../mediator/mixin','../utilities'], function (
    Blocks
   ,BlockMixin
@@ -41,7 +42,6 @@ function Block (name,options) {
   } else {
     self.key = name
     try{
-      console.log(Blocks)
       Blocks.register(name,self)
     } catch (e) {}
   }
@@ -117,3 +117,4 @@ Block.prototype = extend({
 return Block
 
 })
+//@ sourceURL = blocks/block/index.js

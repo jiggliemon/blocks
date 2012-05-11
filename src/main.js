@@ -1,6 +1,12 @@
-define(['./layout/index','./block/index'],
-function ( Layout, Block ){
-
+//@ sourceURL = blocks/main.js
+define(['./layout/index','./block/index','./mediator/mixin','./utilities'],
+function ( 
+   Layout 
+  ,Block 
+  ,MediatorMixin
+  ,utilities 
+){
+  
   var constructors = {
      block: Block
     ,layout: Layout
@@ -8,7 +14,7 @@ function ( Layout, Block ){
   , blocks = {}
   , layouts = {}
 
-  return {
+  return utilities.extend({
      create: function (name) {
       return constructors[name] && constructors[name].apply(this, [].slice.call(arguments, 1))
     }
@@ -26,20 +32,28 @@ function ( Layout, Block ){
     }
 
     ,showLayout: function (key, where) {
-      var layout = layouts[key]
+      var layout = layouts[key], block
+      
+      if (!layout) {
+        window.console && console.warn('Theres no layout with the key `'+key+'`.')
+        return
+      }
+
       where = (where || layout.getWhere()).split('#')
+      
       if (typeof layout.getBlock() === 'function') {
         layout.block = layout.block()
       }
 
-      var block = this.reference(where[0])
-      block.emptyChildNode(where[1])
-      block.setChild(where[1], layout.block)
-
+      block = this.reference(where[0])
+      if (block) {
+        block.emptyChildNode(where[1])
+        block.setChild(where[1], layout.block)
+      }
     }
     
     ,reference: function (key) {
       return blocks[key]
     }
-  }
+  }, MediatorMixin)
 })

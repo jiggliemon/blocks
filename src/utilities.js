@@ -1,3 +1,4 @@
+//@ sourceURL = blocks/utilities.js
 define(function (){
 var  ObjectProto = Object.prototype
     ,ArrayProto = Array.prototype
@@ -23,6 +24,10 @@ function make (context, key, value ) {
 
 function hasOwn (what, key) {
   return ObjectProto.hasOwnProperty.call(what,key)
+}
+
+function argue (args,offset) {
+  return isArray(args)? args: slice(arguments,offset || 0)
 }
 
 function extend () {
@@ -80,6 +85,7 @@ function extend () {
   return target
 }
 
+
 return {
    isArray: isArray
   ,hasOwn: hasOwn
@@ -89,6 +95,8 @@ return {
   ,typeOf: typeOf
   ,extend: extend
   ,forEach: forEach
+  ,argue: argue
 }
 
 })
+//@ sourceURL = blocks/utilities.js

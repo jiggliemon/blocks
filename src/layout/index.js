@@ -1,3 +1,4 @@
+//@ sourceURL = blocks/layout/index.js
 define(function () {
 
   var Layout = function (key, block, where) {
@@ -18,3 +19,4 @@ define(function () {
   }
   return Layout
 })
+//@ sourceURL = blocks/layout/index.js

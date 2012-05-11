@@ -1,3 +1,4 @@
+//@ sourceURL = blocks/mediator/mixin.js
 define(['../utilities'], function (
   utilities
 ) {
@@ -97,7 +98,7 @@ var REGEX = /:(latch(ed$)?)/i
           ,isLatched = _latched[type]
           ,events = _events[type]
           ,length = events ? events.length : 0
-          ,args = utilities.slice[call](arguments,1)
+          ,args = utilities.slice(arguments,1)
           ,i = 0
       
       _switched[type] = 1
@@ -130,3 +131,4 @@ var REGEX = /:(latch(ed$)?)/i
 
 return mixin
 })
+//@ sourceURL = blocks/mediator/mixin.js

@@ -1,3 +1,4 @@
+//@ sourceURL = blocks/template/mixin.js
 define(['../utilities'], function (
   utilities
 ){
@@ -257,3 +258,4 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
 return mixin
 
 })
+//@ sourceURL = blocks/template/mixin.js

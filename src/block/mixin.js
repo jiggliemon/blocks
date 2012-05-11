@@ -1,3 +1,4 @@
+//@ sourceURL = blocks/block/mixin.js
 define(['../utilities'], function(
   utilities
 ) {
@@ -74,12 +75,12 @@ var blockCount = 0
    *  
    *  getChildren(key [,...]) // { key: `Block` child }
    */
-  ,getChildren: function (args) {
-    var  args = utilities.isArray(args) ? args : utilities.slice(arguments,0)
+  ,getChildren: function () {
+    var  args = utilities.argue.apply(null, arguments)
         ,children
         ,_children = utilities.make(this,'_children',{})
        
-    if(arguments.length > 0) {
+    if(args.length > 0) {
       children = {}
       args.forEach(function (arg) {
         children[arg] = this.getChild(arg)
@@ -105,12 +106,12 @@ var blockCount = 0
    *  getChildrenHtml(key) 
    */
   ,getChildrenHtml: function (args) {
-    var children = this.getChildren( arguments )
+    var children = this.getChildren.apply(this, arguments )
       , str = ''
       , key
 
     for(key in children) {
-      if(utilities.hasOwn.call(children, key)) {
+      if(utilities.hasOwn(children, key)) {
         str += String(children[key])
       }
     }
@@ -127,9 +128,9 @@ var blockCount = 0
    *  @param {array || arguments} args The keys to remove from the children
    *  
    */
-  ,removeChildren: function (args) {
-    args = utilities.isArray(args) ? args : utilities.slice(arguments,0)
+  ,removeChildren: function () {
     var self = this  
+      , args = utilities.argue(arguments,0)
       , children = self.getChildren()
       , subSet = {}
       , rejected = {}
@@ -238,8 +239,8 @@ var blockCount = 0
    *
    *
    */
-  ,clearBoundElements: function (args) {
-    var args = utilities.isArray(args)? args : utilities.slice(arguments,0)
+  ,clearBoundElements: function () {
+    var args = utilities.argue(arguments,0)
       , els = this.getBoundElements(args)
 
     this._bound = {}
@@ -378,3 +379,4 @@ mixin.getChildrenHTML = mixin.getChildrenHtml
 return mixin
 
 })
+//@ sourceURL = blocks/block/mixin.js
