@@ -1,38 +1,70 @@
 //@ sourceURL = blocks/main.js
-define(['./layout/index','./block/index','./mediator/mixin','./utilities'],
-function ( 
+define([
+   './layout/index'
+  ,'./block/index'
+  ,'./mediator/mixin'
+  ,'./utilities'
+  ,'./config'
+], function ( 
    Layout 
   ,Block 
   ,MediatorMixin
-  ,utilities 
+  ,utilities
+  ,config
 ){
   
-  var constructors = {
-     block: Block
-    ,layout: Layout
-  }
-  , blocks = {}
-  , layouts = {}
 
-  return utilities.extend({
-     create: function (name) {
-      return constructors[name] && constructors[name].apply(this, [].slice.call(arguments, 1))
+  var Blocks = utilities.extend({
+    _: {
+       blocks: {}
+      ,layouts: {}
+    }
+
+    ,constructors: {
+       block: Block
+      ,layout: Layout
+    }
+
+    ,create: function (name) {
+      var self = this
+        , created
+
+      // if the first argument is a string
+      // return an instance of that key
+      if( typeof name === 'string') {
+        if (self.constructors[name]) { 
+          created = self.constructors[name].apply(this, utilities.slice(arguments, 1))
+        }
+      } else {
+        // return an object w/ the Blocks obj as it's prototype
+        created = utilities.extend((function () {
+          var fn = function() {};
+          fn.prototype = Blocks;
+          return new fn();
+        }()), name || {})
+      }
+      
+      return created
     }
 
     ,register: function (key,block) {
-      if(blocks[key]) {
+      var self = this
+      if(self._.blocks[key]) {
         throw new Error('A block with the name `'+ key +'` already exists')
       }
 
-      blocks[key] = block
+      self._.blocks[key] = block
     }
 
     ,addLayout: function (key, layout, where) {
-      layouts[key] = new Layout(key, layout, where)
+      var self = this
+      self._.layouts[key] = new Layout(key, layout, where)
     }
 
     ,showLayout: function (key, where) {
-      var layout = layouts[key], block
+      var self = this
+        , layout = self._.layouts[key]
+        , block
       
       if (!layout) {
         window.console && console.warn('Theres no layout with the key `'+key+'`.')
@@ -53,7 +85,11 @@ function (
     }
     
     ,reference: function (key) {
-      return blocks[key]
+      // Make this walk a path
+      var self = this
+      return self._.blocks[key]
     }
   }, MediatorMixin)
+
+  return Blocks
 })

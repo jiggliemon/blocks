@@ -106,11 +106,12 @@ var REGEX = /:(latch(ed$)?)/i
       if(events && length) {
         for (; i < length; i++) {
           if (i in events) {
-            try{
+            //try{
               events[i].apply(self,args)
-            } catch (e) { 
-              throw new Error('Problem with the `'+ type +'` event \n'+ e)
-            }
+            //} catch (e) { 
+              //window.console && console.log(events[i])
+              //throw new Error('Problem with the `'+ type +'` event \n'+ e)
+            //}
           }
         }
       }

@@ -13,8 +13,7 @@ define(['blocks','./mixin','../template/mixin','../mediator/mixin','../utilities
 //   , utilities = require('../utilities')
 
 function extend (obj) {
-  utilities.slice(arguments, 1).forEach(function(source){
-
+  utilities.forEach(utilities.slice(arguments, 1),function(source){
     for (var property in source) {
       if (utilities.hasOwn(source,property)) {
         // Commented out the deep extend portions

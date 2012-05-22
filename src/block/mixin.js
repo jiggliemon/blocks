@@ -1,5 +1,7 @@
 //@ sourceURL = blocks/block/mixin.js
-define(['../utilities'], function(
+define([
+  '../utilities'
+], function(
   utilities
 ) {
   
@@ -13,11 +15,12 @@ var blockCount = 0
    *  @param {string} key The childs name
    *  @param {block} value  
    */
-   setChild: function (key, value /*, where */) {
+   setChild: function setChild (key, value /*, where */) {
     if(key == undefined || value == undefined) return
 
-    var child = utilities.make( this.getChildren(), key, [])
-      , el = this.getBoundElement(key)
+    var self = this
+      , child = utilities.make( self.getChildren(), key, [])
+      , el = self.getBoundElement(key)
 
     if(utilities.isArray(value)){
       value.forEach(function(ardvark){
@@ -26,23 +29,22 @@ var blockCount = 0
           el.appendChild(ardvark.toElement())
         }
       })
-      return self
     } else {
       child.push(value)
       if (el) {
         el.appendChild(value.toElement())
       }
     }
-    
-  }
 
+    return self
+  }
 
   /**
    *
    *
    *
    */
-  ,getChild: function (key) {
+  ,getChild: function getChild (key) {
     return this.getChildren()[key]
   }
   
@@ -51,7 +53,7 @@ var blockCount = 0
    *
    *
    */ 
-  ,removeChild: function (key) {
+  ,removeChild: function removeChild (key) {
     return this.removeChildren(key)
   }
 
@@ -60,7 +62,7 @@ var blockCount = 0
    *
    *
    */ 
-  ,setChildren: function (children) {
+  ,setChildren: function setChildren (children) {
     if(!children) return
 
     for(var key in children) {
@@ -75,10 +77,10 @@ var blockCount = 0
    *  
    *  getChildren(key [,...]) // { key: `Block` child }
    */
-  ,getChildren: function () {
+  ,getChildren: function getChildren () {
     var  args = utilities.argue.apply(null, arguments)
-        ,children
-        ,_children = utilities.make(this,'_children',{})
+      , children
+      , _children = utilities.make(this,'_children',{})
        
     if(args.length > 0) {
       children = {}
@@ -95,28 +97,12 @@ var blockCount = 0
    *  
    *  getChildHtml(key) 
    */
-  ,getChildHtml: function (key) {
+  ,getChildHtml: function getChildHtml (key) {
     var child = this.getChild(key)
-    return String(child || '')
-  }
-
-  /**
-   *  Block#getChildrenHtml
-   *  
-   *  getChildrenHtml(key) 
-   */
-  ,getChildrenHtml: function (args) {
-    var children = this.getChildren.apply(this, arguments )
-      , str = ''
-      , key
-
-    for(key in children) {
-      if(utilities.hasOwn(children, key)) {
-        str += String(children[key])
-      }
-    }
-
-    return str
+      , html = child && child.map( function (block) { 
+        return String(block) 
+      }).join('\n')
+    return html
   }
 
   /**
@@ -128,7 +114,7 @@ var blockCount = 0
    *  @param {array || arguments} args The keys to remove from the children
    *  
    */
-  ,removeChildren: function () {
+  ,removeChildren: function removeChildren () {
     var self = this  
       , args = utilities.argue(arguments,0)
       , children = self.getChildren()
@@ -159,7 +145,7 @@ var blockCount = 0
    *  it doesn't remove the children from the block, it only 
    *  manipulates the node
    */
-  ,emptyChildNode: function (key) {
+  ,emptyChildNode: function emptyChildNode (key) {
     var el = this.getBoundElement(key)
     if (el && el.children.length) {
       [].forEach.call(el.children, function (child) {
@@ -173,12 +159,12 @@ var blockCount = 0
    *
    *
    */
-  ,bindTemplate: function () {
-    var  blank = document.createElement('div')
-        ,container = this.getContainer()
+  ,bindTemplate: function bindTemplate () {
+    var self = this 
+      , blank = document.createElement('div')
+      , container = self.getContainer()
     
-    blank.innerHTML = this.compile(this._context)
-    //this.parseBoundElements(blank)
+    blank.innerHTML = self.compile(self._context)
     
     while( blank.children.length ) {
       container.appendChild( blank.children[0] )
@@ -189,9 +175,9 @@ var blockCount = 0
    *
    *
    */
-  ,bindElements: function (el) {
-    var  self = this
-        ,bound
+  ,bindElements: function bindElements (el) {
+    var self = this
+      , bound
 
     if(!(el instanceof Element)) {
       throw new Error(Block.errors.parseElements[0])
@@ -213,7 +199,7 @@ var blockCount = 0
    *
    *
    */
-  ,bindChildren : function () {
+  ,bindChildren : function bindChildren () {
     var self = this
       , children = self.getChildren()
       , placeholder
@@ -239,7 +225,7 @@ var blockCount = 0
    *
    *
    */
-  ,clearBoundElements: function () {
+  ,clearBoundElements: function clearBoundElements () {
     var args = utilities.argue(arguments,0)
       , els = this.getBoundElements(args)
 
@@ -250,7 +236,7 @@ var blockCount = 0
    *
    *
    */
-  ,setBoundElement: function (key, element) {
+  ,setBoundElement: function setBoundElement (key, element) {
 
     var boundElements = utilities.make(this,'_bound',{})
       , bound = boundElements[key] = boundElements[key] || []
@@ -261,16 +247,17 @@ var blockCount = 0
    *
    *
    */
-  ,getBoundElements: function (args) {
-    var args = utilities.isArray(args) ? args : utilities.slice(arguments,0)
+  ,getBoundElements: function getBoundElements (args) {
+    var self = this
+      , args = utilities.isArray(args) ? args : utilities.slice(arguments,0)
       , elements = {}
-      , self = this
+
     if (args.length) {
       args.forEach(function (el) {
         elements[el] = self.getBoundElement(el)
       })
     } else {
-      elements = this._bound
+      elements = self._bound
     }
 
     return elements
@@ -280,7 +267,7 @@ var blockCount = 0
    *
    *
    */
-  ,getBoundElement: function (key) {
+  ,getBoundElement: function getBoundElement (key) {
     var element
       , _bound = utilities.make(this,'_bound',{})
 
@@ -294,7 +281,7 @@ var blockCount = 0
    *
    *
    */ 
-  ,getContainer: function () {
+  ,getContainer: function getContainer () {
     var self = this
     return self.container || self.setContainer()
   }
@@ -303,12 +290,15 @@ var blockCount = 0
    *
    *
    */ 
-  ,setContainer: function (container) {
+  ,setContainer: function setContainer (container) {
     return this.container = (container) ? 
                   ((typeof container === 'string')?document.createElement(container):container)
                   :document.createElement('div')
   }
   
+  ,clean: function clean () {
+
+  }
   /**
    *
    *
@@ -324,7 +314,7 @@ var blockCount = 0
    *
    *
    */ 
-  ,toString: function () {
+  ,toString: function toString () {
     return '<span bind="'+ this.getUniqueId() +'" data-type="module"></span>'
   }
 
@@ -332,13 +322,13 @@ var blockCount = 0
    *
    *
    */
-  ,fillContainer: function (frag) {
+  ,fillContainer: function fillContainer (frag) {
     var  self = this
         ,container = self.getContainer()
         ,clone = container.cloneNode(true)
         ,frag = frag || document.createDocumentFragment()
     self.bindElements(clone)
-    self.attachEvents && self.attachEvents()
+    self.attachEvents && self.attachEvents.call(this)
 
     while(clone.children.length) {
       frag.appendChild(clone.children[0])
@@ -358,7 +348,7 @@ var blockCount = 0
    *
    *
    */ 
-  ,toElement: function () {
+  ,toElement: function toElement () {
     var frag = document.createDocumentFragment()
 
     if(this.ready) {
@@ -368,6 +358,7 @@ var blockCount = 0
       placeholder.setAttribute('class','block-loading')
       frag.appendChild(placeholder)
     }
+
     return frag
   }
 }

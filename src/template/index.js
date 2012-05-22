@@ -15,7 +15,7 @@ function Template (config) {
 } 
 
 Template.prototype = utilities.extend({}, TemplateMixin)
-
+Template.setTags = Template.prototype.setTags
 return Template
 
 })

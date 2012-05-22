@@ -1,6 +1,7 @@
 //@ sourceURL = blocks/template/mixin.js
-define(['../utilities'], function (
-  utilities
+define(['../config', '../utilities'], function (
+   config
+  ,utilities
 ){
 
 function isPath ( str ) {
@@ -34,10 +35,7 @@ function escape (string) {
 
 var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
   , mixin  = {
-   _templateTags: {
-     open: '<%'
-    ,close: '%>'
-  }
+   _templateTags: config.template.tags
 
   ,_templateOperators: {
      interpolate: ['=([\\s\\S]+?)', function (match, code) {
