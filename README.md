@@ -7,14 +7,14 @@ var  Layout = require('blocks/layout')
 // define a route for when to show the root block
 new Layout('/', new Block('root', {
    template: '\
-    <header children="header"></header>\
-    <section children="body"></section>\
-    <footer children="footer"></footer>\
+    <b name="header"></b>\
+    <b name="body"></b>\
+    <b name="footer"></b>\
   '
 
   // define the blocks children
   ,children: {
-     header: new Block({
+     header: new Block('root.header',{
      	template: 'path/to/header/template.tmpl'
      	,children:{
      	  someModule: ['module/identifier', {
@@ -25,13 +25,13 @@ new Layout('/', new Block('root', {
      	  })
      	}
      })
-    ,body: new Block({
+    ,body: new Block('root.body', {
     	template: 'path/to/body/template.tmpl'
     	,children: {
     	  main: new MainBody()
     	}
     })
-    ,footer: new Block({
+    ,footer: new Block('root.footer', {
     	template: 'path/to/footer/template.tmpl'
     })
   }
