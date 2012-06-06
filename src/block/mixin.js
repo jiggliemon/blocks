@@ -4,6 +4,8 @@ define([
 ], function(
   utilities
 ) {
+
+
   
 var blockCount = 0
   , mixin = {
@@ -179,11 +181,11 @@ var blockCount = 0
     var self = this
       , bound
 
-    if(!(el instanceof Element)) {
+    if(!utilities.isElement(el)) {
       throw new Error(Block.errors.parseElements[0])
     }
     self.clearBoundElements()
-    bound = el.querySelectorAll('[bind], block, b[name]')
+    bound = utilities.querySelect('[bind], block, b[name]', el)
 
     utilities.forEach(bound, function (el) {
       var key = el.getAttribute('bind')

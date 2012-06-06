@@ -1,9 +1,16 @@
-//@ sourceURL = blocks/module/index.js
-var ModuleMixin = require('./mixin') 
-  , TemplateMixin = require('../template/mixin') 
-  , BlockMixin  = require('../block/mixin') 
-  , MediatorMixin = require('../mediator/mixin') 
-  , utilities = require('../utilities')
+define([
+   './mixin'
+  ,'../template/mixin'
+  ,'../block/mixin'
+  ,'../mediator/mixin'
+  ,'../utilities'
+], function (
+   ModuleMixin
+  ,TemplateMixin
+  ,BlockMixin
+  ,MediatorMixin
+  ,utilities
+) {
 
 function implement (key, value, retain, undef){
   var k
@@ -46,10 +53,11 @@ function wrap (self, key, method){
 
 
 /** @constructor */
-function Module (methods) {
-
+function Mod (methods) {
+  methods = methods || {}
   function Module () {
-    implement.call(this,methods)
+    // implement.call(this,methods)
+    // console.log(methods)
     this.initialize && this.initialize.apply(this, arguments)
   }
 
@@ -66,11 +74,11 @@ function Module (methods) {
       }
       return parent.apply(this, arguments)
     }
-  }, ModuleMixin, BlockMixin, TemplateMixin, MediatorMixin )
+  }, methods, ModuleMixin, BlockMixin, TemplateMixin, MediatorMixin )
 
   return Module
 }
 
-module.exports = Module
+return Mod
 
-//@ sourceURL = blocks/module/index.js
+})

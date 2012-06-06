@@ -1,7 +1,10 @@
-//@ sourceURL = blocks/module/mixin.js
-var utilities = require('../utilities')
-  , mixin = {
+define([
+  '../utilities'
+], function (
+  utilities
+){
 
+var mixin = {
   /**
    *
    *
@@ -62,6 +65,7 @@ var utilities = require('../utilities')
 
 }
 
-module.exports =  mixin
+return mixin
 
+})
 //@ sourceURL = blocks/module/mixin.js

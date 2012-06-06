@@ -1,0 +1,1 @@
+define(['./module/index'], function (m) {return m})

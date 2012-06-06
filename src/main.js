@@ -19,6 +19,10 @@ define([
        blocks: {}
       ,layouts: {}
     }
+    
+    ,config: function () {
+      
+    }
 
     ,constructors: {
        block: Block
@@ -90,6 +94,6 @@ define([
       return self._.blocks[key]
     }
   }, MediatorMixin)
-
+  Blocks.config
   return Blocks
 })

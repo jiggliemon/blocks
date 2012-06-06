@@ -1,9 +1,24 @@
 //@ sourceURL = blocks/utilities.js
 define(function (){
+
 var  ObjectProto = Object.prototype
     ,ArrayProto = Array.prototype
     ,toString = ObjectProto.toString
     ,isArray = Array.isArray || function(it) { return typeOf(it,'array') }
+    ,doc = document
+
+function querySelect (query, what) {
+  if("querySelectorAll" in doc) {
+    return slice((what || doc).querySelectorAll(query))
+  } else 
+  if ("Mootools" in window ){
+    return (what || doc).getElements(query)
+  } else 
+  if ("jQuery" in window) {
+    return jQuery(query).get()
+  }
+  return null
+}
 
 function typeOf (obj,type,is) {
   is = toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
@@ -85,9 +100,25 @@ function extend () {
   return target
 }
 
+function isElement(obj) {
+  try {
+    //Using W3 DOM2 (works for FF, Opera and Chrom)
+    return obj instanceof HTMLElement;
+  }
+  catch(e){
+    //Browsers not supporting W3 DOM2 don't have HTMLElement and
+    //an exception is thrown and we end up here. Testing some
+    //properties that all elements have. (works on IE7)
+    return (typeof obj==="object") &&
+      (obj.nodeType===1) && (typeof obj.style === "object") &&
+      (typeof obj.ownerDocument ==="object");
+  }
+}
+
 
 return {
    isArray: isArray
+  ,isElement: isElement
   ,hasOwn: hasOwn
   ,toString: toString
   ,slice: slice
@@ -96,6 +127,7 @@ return {
   ,extend: extend
   ,forEach: forEach
   ,argue: argue
+  ,querySelect: querySelect
 }
 
 })

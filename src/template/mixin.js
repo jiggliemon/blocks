@@ -246,7 +246,7 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
       body = head + wrapper.join(inner)
       compiled = new Function('__o', head + wrapper.join(inner))
     } catch (ex) {
-      console && console.warn && console.warn(ex)
+      window.console && console.warn && console.warn(ex)
       throw new Error('Syntax error in template: function body :: ' + body)
     }
     return compiled(data)
