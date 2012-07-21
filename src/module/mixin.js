@@ -9,9 +9,9 @@ var mixin = {
    *
    *
    */
-    setOptions: function (options) {
+  setOptions: function (options) {
     var self = this
-    return (function (){
+    return (function () {
       var  args = arguments
           ,target = args[0]
           ,key
@@ -19,8 +19,8 @@ var mixin = {
           ,l = args.length
           
       for (; i < l; i++) {
-        for (key in args[i]) {
-          if(utilities.hasOwn.call(args[i], key)) {
+        for ( key in args[i] ) {
+          if ( utilities.hasOwn.call(args[i], key) ) {
             target[key] = args[i][key]
           }
         }
@@ -30,17 +30,14 @@ var mixin = {
     }({}, self.defaults || {}, options))
   }
 
-  ,get: function (key) {
-    var  model = this.getModel()
-        ,value
-
-    value = model && this.model.get(key) 
-    
-    if(!value) {
-
-    }
-    return value
-  }
+  // ,get: function (key) {
+  //   var  model = this.getModel()
+  //       ,value
+  //   value = model && this.model.get(key) 
+  //   if(!value) {
+  //   }
+  //   return value
+  // }
 
   /**
    *
@@ -50,13 +47,23 @@ var mixin = {
   ,readyReady: function (args) {
     if(!args && this.options.onReady) {
       args = this.options.onReady
-    } else 
+    } else {
       return
+    }
       
     args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
     // todo: wtf is going on in here
     var callback = args[args.length -1]
-    this.addEvent(args.slice(0,-1),'module:ready',callback.bind(this))
+    this.addEvent(args.slice(0,-1),'module:ready', callback.bind(this))
+  }
+
+  /**
+   *
+   *
+   *
+   */
+  ,showState: function (state) {
+
   }
 
   ,getModel: function () {
@@ -68,4 +75,3 @@ var mixin = {
 return mixin
 
 })
-//@ sourceURL = blocks/module/mixin.js

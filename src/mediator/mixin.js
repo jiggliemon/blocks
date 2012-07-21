@@ -1,12 +1,23 @@
 //@ sourceURL = blocks/mediator/mixin.js
-define(['../utilities'], function (
-  utilities
+define([
+  'yaul/make'
+  ,'yaul/typeOf'
+  ,'yaul/isArray'
+  ,'yaul/hasOwn'
+  ,'yaul/slice'
+
+], function (
+   make
+  ,typeOf
+  ,isArray
+  ,hasOwn
+  ,slice
 ) {
 
 function removeLatched(type){
-  var _latched = utilities.make(this,_LATCHED_, {})
-  if(type.indexOf(':')){
-    if(REGEX.test(type)){
+  var _latched = make(this,_LATCHED_, {})
+  if ( type.indexOf(':') ) {
+    if ( REGEX.test(type) ) {
       type = type.replace(REGEX,'')
       _latched[type] = 1
     }
@@ -23,19 +34,23 @@ var REGEX = /:(latch(ed$)?)/i
   , mixin = {
     
      getEvents: function(key){
-       var _events = utilities.make(this, _EVENTS_, {})
+       var _events = make(this, _EVENTS_, {})
           ,events = _events[type] 
 
-       return utilities.typeOf(key,'string') ? events ?events:[] : Object.keys(_events)
+       return typeOf(key,'string') ? events ? events : [] : Object.keys(_events)
     }
     
-    ,addCompoundEvent: function (events, type, callback) {
+    ,addCompoundEvent: function ( events, type, callback ) {
       type = removeLatched[call](this,type)
       var  self = this
-          ,_switched = utilities.make(self,_SWITCHED_, {})
+        , _switched = make(self,_SWITCHED_, {})
       
-      
-      events = events.map(function (event) {
+      // todo: use yaul/map
+      events = events.map(function ( event ) {
+        if ( self.grr ) {
+          console.log(event)
+        }
+
         event = removeLatched[call](self, event)
         self.addEvent(event, fireCheck)
         return event
@@ -43,36 +58,38 @@ var REGEX = /:(latch(ed$)?)/i
       
       function fireCheck () {
         var length = events.length
-        while(length--){
+        while ( length-- ) {
           if(!_switched[events[length]]) return
         }
         self.fireEvent(type +':latched')
       }
       
-      if(callback){
+      if( callback ){
         self.addEvent(type, callback )
       }
     } 
 
-    ,addEvent: function(/* Sting */ type, /* Function */ callback){
+    ,addEvent: function( /* Sting */ type, /* Function */ callback ){
 
-      if(utilities.isArray(type)) { 
+      if ( isArray(type) ) { 
         return this.addCompoundEvent.apply(this, arguments)
       }
+
       type = removeLatched[call](this,type)
       
       var  self = this
-          ,_events = utilities.make(self, _EVENTS_, {})
-          ,events = utilities.make(_events, type, [])
-          ,_args,_latched
+        , _events = make(self, _EVENTS_, {})
+        , events = make(_events, type, [])
+        , _args,_latched
       
-      if(!utilities.typeOf(callback,'function')) {
+      if (!utilities.typeOf(callback,'function')) {
         throw new TypeError('`#addEvent`\'s second argument must be a function') 
       }
 
-      if(events.indexOf(callback) === -1) {
-        _args = utilities.make(self,_ARGUMENTS_, {})
-        _latched = utilities.make(self,_LATCHED_, {})
+      // todo: use yaul/indexOf
+      if ( events.indexOf(callback) === -1 ) {
+        _args = make(self,_ARGUMENTS_, {})
+        _latched = make(self,_LATCHED_, {})
         _latched[type] ? callback.apply(self,_args[type]) : events.push(callback)
       }
       return self
@@ -80,8 +97,8 @@ var REGEX = /:(latch(ed$)?)/i
 
     ,addEvents: function(/* Object */ events){
       var self = this
-      for(var key in events){
-        if(utilities.hasOwn(events, key)){
+      for ( var key in events ) {
+        if ( hasOwn(events, key) ) {
           self.addEvent(key,events[key])
         }
       }
@@ -91,21 +108,21 @@ var REGEX = /:(latch(ed$)?)/i
     ,fireEvent: function(/* String */ type) {
       type = removeLatched[call](this,type)
       var self = this
-          ,_latched = utilities.make(self,_LATCHED_, {})
-          ,_switched = utilities.make(self,_SWITCHED_, {})
-          ,_args = utilities.make(self,_ARGUMENTS_, {})
-          ,_events = utilities.make(self, _EVENTS_, {})
-          ,isLatched = _latched[type]
-          ,events = _events[type]
-          ,length = events ? events.length : 0
-          ,args = utilities.slice(arguments,1)
-          ,i = 0
+        , _latched = make(self,_LATCHED_, {})
+        , _switched = make(self,_SWITCHED_, {})
+        , _args = make(self,_ARGUMENTS_, {})
+        , _events = make(self, _EVENTS_, {})
+        , isLatched = _latched[type]
+        , events = _events[type]
+        , length = events ? events.length : 0
+        , args = slice(arguments,1)
+        , i = 0
       
       _switched[type] = 1
       
-      if(events && length) {
-        for (; i < length; i++) {
-          if (i in events) {
+      if ( events && length ) {
+        for ( ; i < length; i++ ) {
+          if ( i in events) {
             //try{
               events[i].apply(self,args)
             //} catch (e) { 
@@ -116,7 +133,7 @@ var REGEX = /:(latch(ed$)?)/i
         }
       }
       
-      if(isLatched){
+      if ( isLatched ) {
         _args[type] = args
         delete events
       }
@@ -125,8 +142,8 @@ var REGEX = /:(latch(ed$)?)/i
     }
 
     ,hasFired: function (key) {
-      var _switched = utilities.make(this,_SWITCHED_, {})
-      return _switched[key]?true:false
+      var _switched = make(this,_SWITCHED_, {})
+      return _switched[key] ? true : false
     }
   }
 

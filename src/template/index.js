@@ -1,7 +1,10 @@
 //@ sourceURL = blocks/template/index.js
-define(['./mixin', '../utilities'], function (
+define([
+   './mixin'
+  ,'yaul/extend'
+], function (
    TemplateMixin
-  ,utilities
+  ,extend
 ) {
 
 function Template (config) {
@@ -14,7 +17,7 @@ function Template (config) {
   }
 } 
 
-Template.prototype = utilities.extend({}, TemplateMixin)
+Template.prototype = extend({}, TemplateMixin)
 Template.setTags = Template.prototype.setTags
 return Template
 

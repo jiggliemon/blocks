@@ -1,11 +1,21 @@
 //@ sourceURL = blocks/template/mixin.js
-define(['../config', '../utilities'], function (
+define([
+   '../config'
+  ,'yaul/hasOwn'
+  ,'yaul/typeOf'
+  ,'yaul/isArray'
+  ,'yaul/slice'
+], function (
    config
-  ,utilities
+  ,hasOwn
+  ,typeOf
+  ,isArray
+  ,slice
 ){
 
 function isPath ( str ) {
   if(!str) return !!0;
+  // todo: use yaul/trim
   str = String(str).trim()
 
   // crude check for a dom node && multiple lines
@@ -56,9 +66,9 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
         ,context = self.getContext()
         ,k
 
-    if (utilities.typeOf( key, 'object')) {
-      for (k in key) {
-        if (utilities.hasOwn(key,k)) {
+    if ( typeOf( key, 'object') ) {
+      for ( k in key ) {
+        if ( hasOwn(key,k) ) {
           self.setContext(k, key[k])
         }
       }
@@ -75,11 +85,11 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
    *
    */ 
   ,getContext: function (args) {
-    var  args = utilities.isArray(args) ? args : utilities.slice(arguments,0)
-        ,context = utilities.make(this, '_context', {})
+    var args = isArray(args) ? args : slice(arguments,0)
+      , context = make(this, '_context', {})
 
-    if(arguments.length > 0) {
-      args.forEach(function (arg) {
+    if (arguments.length > 0 ) {
+      forEach(args, function (arg) {
         context[arg] = this._context[arg]
       })
     }
@@ -94,7 +104,7 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
    */ 
   ,setTags: function ( tags) {
     for ( var key in tags) {
-      if (utilities.hasOwn(tags,key)) {
+      if ( hasOwn(tags,key) ) {
         this.setTag(key,tags[key])
       }
     }
@@ -137,13 +147,17 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
    *
    */ 
   ,setTemplate: function ( /* String */ str) {
+    // todo: use yaul/trim
     str = String(str).trim().replace(/\\?'/g,"\\'")
-    if(!str) return
+    if (!str) {
+      return
+    }
 
     var self = this;
 
-    if(isPath(str)) {
+    if ( isPath(str) ) {
       require([str],function (tmpl) {
+        // todo: use yaul/trim
         self._template = String(tmpl).trim().replace(/\\?'/g,"\\'")
         self.fireEvent && self.fireEvent('template:ready:latched', self._template)
       })
@@ -171,10 +185,10 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
   ,parseOperators: function () {
     var key, operator, operators = this._templateOperators
 
-    for (key in operators) {
-      if (utilities.hasOwn(operators, key)) {
+    for ( key in operators ) {
+      if ( hasOwn(operators, key) ) {
         operator = operators[key]
-        if (utilities.typeOf(operator[0], 'string')) {
+        if ( typeOf(operator[0], 'string') ) {
           this.addOperator(key, operator[0], operator[1])
         }
       }
@@ -188,7 +202,7 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
    */ 
   ,getOperators: function () {
     var self = this
-    if (!self._operatorsParsed) {
+    if ( !self._operatorsParsed ) {
       self.parseOperators()
     }
     return self._templateOperators
@@ -204,7 +218,7 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
     // This will be part of a str.replace method
     // So the arguments should match those that you would use
     // for the .replace method on strings.
-    if (!utilities.typeOf(regexp, 'regexp')) { // todo: Fix Duck Typing for regexp
+    if ( !typeOf(regexp, 'regexp') ) { // todo: Fix Duck Typing for regexp
       regexp = new RegExp(self.getTag('open') + regexp + self.getTag('close'), 'g')
     }
     
@@ -218,18 +232,18 @@ var pathRegexp = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@
    */ 
   ,compile: function ( /* Object */ data) {
     data = data || this._context;
-    var  self = this
-        ,open = this.getTag('open')
-        ,close = this.getTag('close')
-        ,operators = this.getOperators()
-        ,key, body, head = 'var p=[],print=function(){p.push.apply(p,arguments);};'
-        ,wrapper = ["with(__o){p.push('", "');}return p.join('');"]
-        ,compiled = null
-        ,template = this.getTemplate()
-        ,inner = !template ? "<b>No template</b>" : template.replace(/[\r\t\n]/g, " ")
+    var self = this
+      , open = this.getTag('open')
+      , close = this.getTag('close')
+      , operators = this.getOperators()
+      , key, body, head = 'var p=[],print=function(){p.push.apply(p,arguments);};'
+      , wrapper = ["with(__o){p.push('", "');}return p.join('');"]
+      , compiled = null
+      , template = this.getTemplate()
+      , inner = !template ? "<b>No template</b>" : template.replace(/[\r\t\n]/g, " ")
 
-    for (key in operators) {
-      if (utilities.hasOwn(operators,key)) {
+    for ( key in operators ) {
+      if ( hasOwn(operators,key) ) {
         inner = inner.replace(operators[key][0], operators[key][1])
       }
     }

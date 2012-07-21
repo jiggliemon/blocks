@@ -1,20 +1,22 @@
 //@ sourceURL = blocks/main.js
 define([
-   './layout/index'
+   './config'
+  ,'./layout/index'
   ,'./block/index'
   ,'./mediator/mixin'
-  ,'./utilities'
-  ,'./config'
+  ,'yaul/extend'
+  ,'yaul/slice'
 ], function ( 
-   Layout 
+   config
+  ,Layout 
   ,Block 
   ,MediatorMixin
-  ,utilities
-  ,config
+  ,extend
+  ,slice
 ){
   
 
-  var Blocks = utilities.extend({
+  var Blocks = extend({
     _: {
        blocks: {}
       ,layouts: {}
@@ -35,13 +37,13 @@ define([
 
       // if the first argument is a string
       // return an instance of that key
-      if( typeof name === 'string') {
-        if (self.constructors[name]) { 
-          created = self.constructors[name].apply(this, utilities.slice(arguments, 1))
+      if ( typeof name === 'string' ) {
+        if ( self.constructors[name] ) { 
+          created = self.constructors[name].apply(this, slice(arguments, 1))
         }
       } else {
         // return an object w/ the Blocks obj as it's prototype
-        created = utilities.extend((function () {
+        created = extend((function () {
           var fn = function() {};
           fn.prototype = Blocks;
           return new fn();
@@ -53,7 +55,7 @@ define([
 
     ,register: function (key,block) {
       var self = this
-      if(self._.blocks[key]) {
+      if ( self._.blocks[key] ) {
         throw new Error('A block with the name `'+ key +'` already exists')
       }
 
@@ -70,14 +72,14 @@ define([
         , layout = self._.layouts[key]
         , block
       
-      if (!layout) {
+      if ( !layout ) {
         window.console && console.warn('Theres no layout with the key `'+key+'`.')
         return
       }
 
       where = (where || layout.getWhere()).split('#')
       
-      if (typeof layout.getBlock() === 'function') {
+      if ( typeof layout.getBlock() === 'function' ) {
         layout.block = layout.block()
       }
 

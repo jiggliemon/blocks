@@ -1,8 +1,8 @@
 //@ sourceURL = blocks/mediator/index.js
-define(['./mixin','../utilities'], 
+define(['./mixin','yaul/extend'], 
 function(
    MediatorMixin
-  ,utilities
+  ,extend
 ){
 
 function Mediator (){
@@ -12,7 +12,7 @@ function Mediator (){
   self._arguments = {};
   self._switched = {};
 }
-Mediator.prototype = utilities.extend({}, MediatorMixin)
+Mediator.prototype = extend({}, MediatorMixin)
 
 return Mediator;
 })

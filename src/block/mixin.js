@@ -1,12 +1,23 @@
 //@ sourceURL = blocks/block/mixin.js
 define([
-  '../utilities'
+   'yaul/make'
+  ,'yaul/forEach'
+  ,'yaul/isArray'
+  ,'yaul/isElement'
+  ,'yaul/hasOwn'
+  ,'yaul/slice'
+  ,'yaul/querySelect'
+
 ], function(
-  utilities
+   make
+  ,forEach
+  ,isArray
+  ,isElement
+  ,hasOwn
+  ,slice
+  ,querySelect
 ) {
 
-
-  
 var blockCount = 0
   , mixin = {
 
@@ -18,14 +29,14 @@ var blockCount = 0
    *  @param {block} value  
    */
    setChild: function setChild (key, value /*, where */) {
-    if(key == undefined || value == undefined) return
+    if(key === undefined || value === undefined) return
 
     var self = this
-      , child = utilities.make( self.getChildren(), key, [])
+      , child = make( self.getChildren(), key, [])
       , el = self.getBoundElement(key)
 
-    if(utilities.isArray(value)){
-      value.forEach(function(ardvark){
+    if(isArray(value)){
+      forEach(value, function(ardvark){
         child.push(ardvark)
         if (el) {
           el.appendChild(ardvark.toElement())
@@ -65,11 +76,13 @@ var blockCount = 0
    *
    */ 
   ,setChildren: function setChildren (children) {
-    if(!children) return
+    if( !children ) {
+      return
+    }
 
-    for(var key in children) {
-      if(utilities.hasOwn(children,key)) {
-        this.setChild(key, children[key])
+    for( var key in children ) {
+      if( hasOwn(children,key) ) {
+        this.setChild( key, children[key] )
       }
     }
   }
@@ -79,14 +92,14 @@ var blockCount = 0
    *  
    *  getChildren(key [,...]) // { key: `Block` child }
    */
-  ,getChildren: function getChildren () {
-    var  args = utilities.argue.apply(null, arguments)
+  ,getChildren: function getChildren ( arr ) {
+    var  args = isArray(arr)? arr: slice( arguments )
       , children
-      , _children = utilities.make(this,'_children',{})
+      , _children = make(this,'_children',{})
        
-    if(args.length > 0) {
+    if ( args.length > 0 ) {
       children = {}
-      args.forEach(function (arg) {
+      forEach(args, function ( arg ) {
         children[arg] = this.getChild(arg)
       })
     }
@@ -99,8 +112,8 @@ var blockCount = 0
    *  
    *  getChildHtml(key) 
    */
-  ,getChildHtml: function getChildHtml (key) {
-    var child = this.getChild(key)
+  ,getChildHtml: function getChildHtml ( key ) {
+    var child = this.getChild( key)
       , html = child && child.map( function (block) { 
         return String(block) 
       }).join('\n')
@@ -116,18 +129,18 @@ var blockCount = 0
    *  @param {array || arguments} args The keys to remove from the children
    *  
    */
-  ,removeChildren: function removeChildren () {
+  ,removeChildren: function removeChildren (arr) {
     var self = this  
-      , args = utilities.argue(arguments,0)
+      , args = isArray(arr)? arr : slice(arguments,0)
       , children = self.getChildren()
       , subSet = {}
       , rejected = {}
       , key
 
-    if(args.length > 0) {
-      for(key in children) {
-        if(utilities.hasOwn( children, key )){
-          if(args.indexOf(key) === -1) {
+    if( args.length > 0 ) {
+      for( key in children ) {
+        if( hasOwn(children, key) ){
+          if( args.indexOf(key) === -1 ) {
             subSet[key] = children[key]
           } else {
             rejected[key] = children[key] 
@@ -149,8 +162,8 @@ var blockCount = 0
    */
   ,emptyChildNode: function emptyChildNode (key) {
     var el = this.getBoundElement(key)
-    if (el && el.children.length) {
-      [].forEach.call(el.children, function (child) {
+    if ( el && el.children.length ) {
+      forEach(el.children, function (child) {
         el.removeChild(child)
         delete child
       })
@@ -165,11 +178,11 @@ var blockCount = 0
     var self = this 
       , blank = document.createElement('div')
       , container = self.getContainer()
-    
+
     blank.innerHTML = self.compile(self._context)
     
-    while( blank.children.length ) {
-      container.appendChild( blank.children[0] )
+    while ( blank.children.length ) {
+      container.appendChild(blank.children[0])
     }
   }
   
@@ -181,16 +194,16 @@ var blockCount = 0
     var self = this
       , bound
 
-    if(!utilities.isElement(el)) {
+    if(!isElement(el)) {
       throw new Error(Block.errors.parseElements[0])
     }
     self.clearBoundElements()
-    bound = utilities.querySelect('[bind], block, b[name]', el)
+    bound = querySelect('[bind], block, b[name]', el)
 
-    utilities.forEach(bound, function (el) {
+    forEach(bound, function (el) {
       var key = el.getAttribute('bind')
         , tagName = el.tagName.toLowerCase()
-      if(!key && ((tagName === 'block') || (tagName === 'b'))) {
+      if( !key && ((tagName === 'block') || (tagName === 'b')) ) {
         key = el.getAttribute('name')
       }
       self.setBoundElement(key,el)
@@ -211,11 +224,11 @@ var blockCount = 0
     
     for(key in children) {
       placeholder = null
-      if(utilities.hasOwn( children, key )){
+      if( hasOwn(children, key) ){
         modules = children[key]
         placeholder = self.getBoundElement(key)
-        if(!!(placeholder) && utilities.isArray(modules) && modules.length > 0) {
-          modules.forEach(function( module ){
+        if(!!(placeholder) && isArray(modules) && modules.length > 0) {
+          forEach( modules, function( module ){
             placeholder.appendChild(module.toElement())
           })
         }
@@ -227,8 +240,8 @@ var blockCount = 0
    *
    *
    */
-  ,clearBoundElements: function clearBoundElements () {
-    var args = utilities.argue(arguments,0)
+  ,clearBoundElements: function clearBoundElements (arr) {
+    var args = isArray(arr)? arr: slice(arguments)
       , els = this.getBoundElements(args)
 
     this._bound = {}
@@ -240,7 +253,7 @@ var blockCount = 0
    */
   ,setBoundElement: function setBoundElement (key, element) {
 
-    var boundElements = utilities.make(this,'_bound',{})
+    var boundElements = make(this,'_bound',{})
       , bound = boundElements[key] = boundElements[key] || []
     bound.push(element)
   }
@@ -251,11 +264,11 @@ var blockCount = 0
    */
   ,getBoundElements: function getBoundElements (args) {
     var self = this
-      , args = utilities.isArray(args) ? args : utilities.slice(arguments,0)
+      , args = isArray(args) ? args: slice(arguments)
       , elements = {}
 
     if (args.length) {
-      args.forEach(function (el) {
+      forEach(args, function (el) {
         elements[el] = self.getBoundElement(el)
       })
     } else {
@@ -271,7 +284,7 @@ var blockCount = 0
    */
   ,getBoundElement: function getBoundElement (key) {
     var element
-      , _bound = utilities.make(this,'_bound',{})
+      , _bound = make(this,'_bound',{})
 
     if(!(element = _bound[key])){
       return undefined
@@ -308,7 +321,7 @@ var blockCount = 0
    */ 
   ,getUniqueId: function () {
     var self = this
-    return self._uniqueId = utilities.make(self, '_uniqueId', Date.now().toString(36) + (blockCount++))
+    return self._uniqueId = make(self, '_uniqueId', Date.now().toString(36) + (blockCount++))
   }
  
   /**

@@ -1,21 +1,31 @@
 //@ sourceURL = blocks/block/index.js
-define(['blocks','./mixin','../template/mixin','../mediator/mixin','../utilities'], function (
+define([
+   'blocks'
+  ,'./mixin'
+  ,'../template/mixin'
+  ,'../mediator/mixin'
+  ,'yaul/hasOwn'
+  ,'yaul/forEach'
+  ,'yaul/slice'
+  ,'yaul/isArray'
+  ,'yaul/make'
+], function (
    Blocks
   ,BlockMixin
   ,TemplateMixin
   ,MediatorMixin
-  ,utilities
+  ,hasOwn
+  ,forEach
+  ,slice
+  ,isArray
+  ,make
 ) {
 
-// var BlockMixin = require('./mixin')
-//   , TemplateMixin = require('../template/mixin')
-//   , MediatorMixin = require('../mediator/mixin')
-//   , utilities = require('../utilities')
 
 function extend (obj) {
-  utilities.forEach(utilities.slice(arguments, 1),function(source){
+  forEach(slice(arguments, 1),function(source){
     for (var property in source) {
-      if (utilities.hasOwn(source,property)) {
+      if (hasOwn(source,property)) {
         // Commented out the deep extend portions
         // if (source[property] && source[property].constructor && source[property].constructor === Object) {
         //   obj[property] = obj[property] || {};
@@ -36,7 +46,7 @@ function Block (name,options) {
   }
   
   var self = this
-  if(!utilities.typeOf( name, 'string' ) && arguments.length == 1) {
+  if(typeof name === 'string' && arguments.length == 1) {
     options = name
   } else {
     self.key = name
@@ -93,10 +103,10 @@ Block.prototype = extend({
       return
     }
     
-    args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
+    args = isArray(args) ? args : slice(arguments,0)
     // todo: wtf is going on in here
     var callback = args[args.length -1]
-    self.addEvent(args.slice(0,-1),'block:ready', callback.bind(self))
+    self.addEvent(slice(0,-1),'block:ready', callback.bind(self))
   }
 
   /**
@@ -105,8 +115,8 @@ Block.prototype = extend({
    */
    ,setOptions: function (options) {
     var self = this
-    _options = utilities.make(self,'options',{})
-    _defaults = utilities.make(self,'defaults',{})
+    _options = make(self,'options',{})
+    _defaults = make(self,'defaults',{})
     return extend(_options, _defaults, options || {})
   } 
 
