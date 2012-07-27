@@ -3,38 +3,42 @@ define([
   ,'../template/mixin'
   ,'../block/mixin'
   ,'../mediator/mixin'
-  ,'../utilities'
+  ,'yaul/typeOf'
+  ,'yaul/hasOwn'
+  ,'yaul/extend'
 ], function (
    ModuleMixin
   ,TemplateMixin
   ,BlockMixin
   ,MediatorMixin
-  ,utilities
+  ,typeOf
+  ,hasOwn
+  ,extend
 ) {
 
 function implement (key, value, retain, undef){
   var k
   if (key === undef) return
 
-  if (utilities.typeOf(key,'object')) {
+  if (typeOf(key,'object')) {
     for ( k in key ) {
-      if (utilities.hasOwn.call(key,k)) {    
+      if (hasOwn(key,k)) {    
         implement.call(this,k, key[k])
       }
     }  
     return;
   }
 
-  this[key] = utilities.typeOf( value, 'function') ? (retain) ? value : wrap(this, key, value) : value
+  this[key] = typeOf( value, 'function') ? (retain) ? value : wrap(this, key, value) : value
   
   return this
 }
 
 function wrap (self, key, method){
   function wrapper () {
-    var  caller = this.caller 
-        ,current = this.$caller
-        ,result
+    var caller = this.caller 
+      , current = this.$caller
+      , result
 
     this.caller = current 
     this.$caller = wrapper
@@ -61,7 +65,7 @@ function Mod (methods) {
     this.initialize && this.initialize.apply(this, arguments)
   }
 
-  Module.prototype = utilities.extend({
+  Module.prototype = extend({
     /**
      *
      *

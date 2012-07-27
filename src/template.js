@@ -1,1 +1,0 @@
-define(['./template/index'], function (x){return x});

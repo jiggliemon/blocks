@@ -1,7 +1,11 @@
 define([
-  '../utilities'
+  'yaul/hasOwn'
+  ,'yaul/slice'
+  ,'yaul/isArray'
 ], function (
-  utilities
+   hasOwn
+  ,slice
+  ,isArray
 ){
 
 var mixin = {
@@ -12,15 +16,15 @@ var mixin = {
   setOptions: function (options) {
     var self = this
     return (function () {
-      var  args = arguments
-          ,target = args[0]
-          ,key
-          ,i = 1
-          ,l = args.length
+      var args = arguments
+        , target = args[0]
+        , key
+        , i = 1
+        , l = args.length
           
       for (; i < l; i++) {
         for ( key in args[i] ) {
-          if ( utilities.hasOwn.call(args[i], key) ) {
+          if ( hasOwn(args[i], key) ) {
             target[key] = args[i][key]
           }
         }
@@ -51,7 +55,7 @@ var mixin = {
       return
     }
       
-    args = utilities.isArray(args) ? args : utilities.slice.call(arguments,0)
+    args = isArray(args) ? args : slice(arguments,0)
     // todo: wtf is going on in here
     var callback = args[args.length -1]
     this.addEvent(args.slice(0,-1),'module:ready', callback.bind(this))

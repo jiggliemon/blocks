@@ -2,13 +2,14 @@
 define([
    'blocks'
   ,'./mixin'
-  ,'../template/mixin'
+  ,'yate/mixin'
   ,'../mediator/mixin'
   ,'yaul/hasOwn'
   ,'yaul/forEach'
   ,'yaul/slice'
   ,'yaul/isArray'
   ,'yaul/make'
+  ,'yaul/typeOf'
 ], function (
    Blocks
   ,BlockMixin
@@ -19,6 +20,7 @@ define([
   ,slice
   ,isArray
   ,make
+  ,typeOf
 ) {
 
 
@@ -26,13 +28,7 @@ function extend (obj) {
   forEach(slice(arguments, 1),function(source){
     for (var property in source) {
       if (hasOwn(source,property)) {
-        // Commented out the deep extend portions
-        // if (source[property] && source[property].constructor && source[property].constructor === Object) {
-        //   obj[property] = obj[property] || {};
-        //   extend(obj[property], source[property]);
-        // } else {
-          obj[property] = source[property]
-        // }
+        obj[property] = source[property]
       }
     }
   })
@@ -40,19 +36,24 @@ function extend (obj) {
 }
 
 /** @constructor */
-function Block (name,options) {
-  if (!(this instanceof Block)) {
+function Block ( name, options, methods ) {
+  if ( !(this instanceof Block) ) {
     return new Block(name, options)
   }
   
   var self = this
-  if(typeof name === 'string' && arguments.length == 1) {
+
+  if ( typeof name === 'string' && arguments.length == 1 ) {
     options = name
   } else {
     self.key = name
-    try{
+    try {
       Blocks.register(name,self)
     } catch (e) {}
+  }
+
+  if ( typeOf(methods, 'object') && (arguments.length === 3) ) {
+    extend(this, methods)
   }
 
   self.setOptions(options)

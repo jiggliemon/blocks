@@ -44,7 +44,7 @@ define([
       } else {
         // return an object w/ the Blocks obj as it's prototype
         created = extend((function () {
-          var fn = function() {};
+          var fn = function () {};
           fn.prototype = Blocks;
           return new fn();
         }()), name || {})
