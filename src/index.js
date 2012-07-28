@@ -1,9 +1,8 @@
 //@ sourceURL = blocks/block/index.js
 define([
-   'blocks'
-  ,'./mixin'
+   './mixin'
   ,'yate/mixin'
-  ,'../mediator/mixin'
+  ,'yeah/mixin'
   ,'yaul/hasOwn'
   ,'yaul/forEach'
   ,'yaul/slice'
@@ -11,8 +10,7 @@ define([
   ,'yaul/make'
   ,'yaul/typeOf'
 ], function (
-   Blocks
-  ,BlockMixin
+   BlockMixin
   ,TemplateMixin
   ,MediatorMixin
   ,hasOwn
@@ -47,9 +45,6 @@ function Block ( name, options, methods ) {
     options = name
   } else {
     self.key = name
-    try {
-      Blocks.register(name,self)
-    } catch (e) {}
   }
 
   if ( typeOf(methods, 'object') && (arguments.length === 3) ) {

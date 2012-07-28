@@ -1,9 +1,8 @@
 //@ sourceURL = blocks/main.js
 define([
-   './config'
-  ,'./layout/index'
-  ,'./block/index'
-  ,'./mediator/mixin'
+   './index'
+  ,'yale'
+  ,'yeah/mixin'
   ,'yaul/extend'
   ,'yaul/slice'
 ], function ( 

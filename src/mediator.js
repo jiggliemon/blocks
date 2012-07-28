@@ -1,1 +1,0 @@
-define(['./mediator/index'], function (x){return x});
