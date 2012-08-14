@@ -13,7 +13,6 @@ define([
   ,extend
   ,slice
 ){
-  
 
   var Blocks = extend({
     _: {
