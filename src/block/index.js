@@ -97,8 +97,8 @@ Block.prototype = extend({
    */
    ,setOptions: function (options) {
     var self = this
-    _options = make(self,'options',{})
-    _defaults = make(self,'defaults',{})
+    var _options = make(self,'options',{})
+    var _defaults = make(self,'defaults',{})
     return extend(_options, _defaults, options || {})
   } 
 
