@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/jiggliemon/blocks.png)](http://travis-ci.org/jiggliemon/blocks)
 # Blocks.js
 
 ``` js
