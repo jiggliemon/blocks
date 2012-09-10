@@ -27,7 +27,7 @@ function Block ( name, options, methods ) {
   
   var self = this
 
-  if ( typeof name === 'string' && arguments.length == 1 ) {
+  if ( typeof name !== 'string' && arguments.length == 1 ) {
     options = name
   } else {
     self.key = name
@@ -48,6 +48,7 @@ Block.prototype = extend({
     onReady: ['template:ready', function blockReady () {
       var self = this
       self.ready = true
+
       self.setContext(self.options.context)
       self.setContext('block',self)
       self.bindTemplate()
@@ -67,6 +68,7 @@ Block.prototype = extend({
     if(options.attachEvents) {
       self.attachEvents = options.attachEvents
     }
+
     self.setChildren( options.children )
     self.setContainer( options.container )
     self.setTemplate( options.template )
@@ -88,7 +90,7 @@ Block.prototype = extend({
     args = isArray(args) ? args : slice(arguments,0)
     // todo: wtf is going on in here
     var callback = args[args.length -1]
-    self.addEvent(slice(0,-1),'block:ready', callback.bind(self))
+    self.addEvent(Array.prototype.slice.call(args,0,-1),'block:ready', callback.bind(self))
   }
 
   /**

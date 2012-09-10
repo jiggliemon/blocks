@@ -187,7 +187,7 @@ var mixin = {
       throw new Error(Block.errors.parseElements[0])
     }
     self.clearBoundElements()
-    bound = el.querySelectAll('[bind], block, b[name]')
+    bound = el.querySelectorAll('[bind], block, b[name]')
 
     forEach(bound, function (el) {
       var key = el.getAttribute('bind')
