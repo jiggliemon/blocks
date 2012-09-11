@@ -1,4 +1,4 @@
-# Blocks.js
+# Blocks
 
 ``` js
 /*
@@ -9,6 +9,9 @@
     <p> This is some content for the body</p>
 </div>
 */
+
+var Block = require('blocks/block')
+
 var someBlock = new Block('some', {
     template: '\
         <div bind="header" class="header">\
@@ -32,3 +35,47 @@ var someBlock = new Block('some', {
 
 document.body.appendChild(someBlock.toElement())
 ```
+
+
+#### Dependencies
+- AMD Loader
+- [Yaul](https://github.com/GCheung55/yaul)
+- [Yeah mixin](https://github.com/jiggliemon/yeah)
+- [Yate mixin](https://github.com/jiggliemon/yate)
+
+#### Installation
+`npm install blocks`
+
+#### Constructor API
+- [Block](#block)
+
+#### Mixin API
+- #setChild
+- #getChild
+- #removeChild
+- #setChildren
+- #getChildren
+- #removeChildren
+- #getChildHtml
+- #emptyChildNode
+- #attachEvents
+- #bindTemplate
+- #bindElements
+- #bindChildren
+- #clearBoundElements
+- #setBoundElement | #bound
+- #getBoundElements
+- #getBoundElement
+- #getContainer
+- #setContainer
+- #getUniqueId
+- #toString
+- #fillContainer
+- #toElement
+
+
+## <a id="block"></a> Block
+
+
+
+

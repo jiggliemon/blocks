@@ -165,14 +165,17 @@ var mixin = {
    *
    */
   ,attachEvents: function () {
+    var self = this
     var events = make(this,'events',{})
-    var el, identifier, event
+    var el, identifier, event, fn, key
 
-    for ( var key in events ) {
+    for ( key in events ) {
       k = key.split(':')
       identifier = k[0]
       event = k[1]
+      fn = ( typeOf(events[key],'function') )? events[key]: this[events[key]]
       el = this.getBoundElement(identifier)
+
       if ( el ) {
         el.addEventListener(event, events[key].bind(this))
       }
@@ -351,7 +354,9 @@ var mixin = {
         ,container = self.getContainer()
         ,clone = container.cloneNode(true)
         ,frag = frag || document.createDocumentFragment()
+    
     self.bindElements(clone)
+
     self.attachEvents && self.attachEvents.call(this)
 
     while(clone.children.length) {
@@ -387,7 +392,7 @@ var mixin = {
   }
 }
 
-mixin.getBound = mixin.getBoundElement
+mixin.bound = mixin.getBoundElement
 mixin.getChildHTML = mixin.getChildHtml
 mixin.getChildrenHTML = mixin.getChildrenHtml
   
