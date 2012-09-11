@@ -7,6 +7,14 @@ var slice = require('yaul/slice')
 var isArray = require('yaul/isArray')
 var make = require('yaul/make')
 var typeOf = require('yaul/typeOf')
+var css = require('text!./styles.css')
+
+;(function (doc) {
+  var style = doc.createElement('style')
+  style.innerHTML = css
+  var s = doc.getElementsByTagName('script')[0]; 
+  s.parentNode.insertBefore(style, s)
+}(document))
 
 function extend (obj) {
   forEach(slice(arguments, 1),function(source){
@@ -20,24 +28,52 @@ function extend (obj) {
 }
 
 /** @constructor */
-function Block ( name, options, methods ) {
+function Block (  ) {
   if ( !(this instanceof Block) ) {
     return new Block(name, options)
   }
   
   var self = this
+  var name
+  var options
+  var methods
 
-  if ( typeof name !== 'string' && arguments.length == 1 ) {
-    options = name
-  } else {
-    self.key = name
+  // new Block('name', {
+  //   ... options ...
+  // }[,{...methods...}])
+  if ( typeOf(arguments[0], 'string') ) {
+    self.key = arguments[0]
+
+    if( typeOf(arguments[1], 'object') ) {
+      self.setOptions(arguments[1])
+    }
+    
+    if ( typeOf(arguments[2], object) ) {
+      self.setMethods(arguments[2])
+    }
   }
 
-  if ( typeOf(methods, 'object') && (arguments.length === 3) ) {
-    extend(this, methods)
+  // new Block({
+  //  ... options ...
+  // }[, {... methods ...}]);
+  if ( typeOf(arguments[0], 'object') ) {
+    self.setOptions(arguments[0])
+
+    if( typeOf(arguments[1], 'object') ) {
+      self.setMethods(arguments[1])
+    }
   }
 
-  self.setOptions(options)
+  // if ( typeof name !== 'string' && arguments.length == 1 ) {
+  //   options = name
+  // } else {
+  //   self.key = name
+  // }
+
+  // if ( typeOf(methods, 'object') && (arguments.length === 3) ) {
+  //   extend(this, methods)
+  // }
+
   self.initialize(self.options)
 }
 
@@ -50,7 +86,6 @@ Block.prototype = extend({
       self.ready = true
 
       self.setContext(self.options.context)
-      self.setContext('block',self)
       self.bindTemplate()
       self.fillContainer()
     }]

@@ -168,7 +168,7 @@ var mixin = {
       , blank = document.createElement('div')
       , container = self.getContainer()
 
-    blank.innerHTML = self.compile(self._context)
+    blank.innerHTML = self.compile(self._context, self)
     
     while ( blank.children.length ) {
       container.appendChild(blank.children[0])
