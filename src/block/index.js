@@ -28,51 +28,38 @@ function extend (obj) {
 }
 
 /** @constructor */
-function Block (  ) {
+function Block (arg1,arg2,arg3  ) {
+
   if ( !(this instanceof Block) ) {
-    return new Block(name, options)
+    return new Block(arg1, arg2, arg3)
   }
   
   var self = this
-  var name
-  var options
-  var methods
-
   // new Block('name', {
   //   ... options ...
   // }[,{...methods...}])
-  if ( typeOf(arguments[0], 'string') ) {
-    self.key = arguments[0]
+  if ( typeOf(arg1, 'string') ) {
+    self.key = arg1
 
-    if( typeOf(arguments[1], 'object') ) {
-      self.setOptions(arguments[1])
+    if( typeOf(arg2, 'object') ) {
+      self.setOptions(arg2)
     }
     
-    if ( typeOf(arguments[2], object) ) {
-      self.setMethods(arguments[2])
+    if ( typeOf(arg3, object) ) {
+      extend(this, arg3)
     }
   }
 
   // new Block({
   //  ... options ...
   // }[, {... methods ...}]);
-  if ( typeOf(arguments[0], 'object') ) {
-    self.setOptions(arguments[0])
+  if ( typeOf(arg1, 'object') ) {
+    self.setOptions(arg1)
 
-    if( typeOf(arguments[1], 'object') ) {
-      self.setMethods(arguments[1])
+    if( typeOf(arg2, 'object') ) {
+      extend(this, arg2)
     }
   }
-
-  // if ( typeof name !== 'string' && arguments.length == 1 ) {
-  //   options = name
-  // } else {
-  //   self.key = name
-  // }
-
-  // if ( typeOf(methods, 'object') && (arguments.length === 3) ) {
-  //   extend(this, methods)
-  // }
 
   self.initialize(self.options)
 }
@@ -100,10 +87,11 @@ Block.prototype = extend({
     var self = this
     self.readyReady()
 
-    if(options.attachEvents) {
-      self.attachEvents = options.attachEvents
-    }
-
+    // if(options.attachEvents) {
+    //   self.attachEvents = options.attachEvents
+    // }
+    make(this,'events', options.events || {})
+    
     self.setChildren( options.children )
     self.setContainer( options.container )
     self.setTemplate( options.template )

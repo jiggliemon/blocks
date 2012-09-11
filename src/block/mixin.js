@@ -158,6 +158,26 @@ var mixin = {
       })
     }
   }
+
+  /**
+   *
+   *
+   *
+   */
+  ,attachEvents: function () {
+    var events = make(this,'events',{})
+    var el, identifier, event
+
+    for ( var key in events ) {
+      k = key.split(':')
+      identifier = k[0]
+      event = k[1]
+      el = this.getBoundElement(identifier)
+      if ( el ) {
+        el.addEventListener(event, events[key].bind(this))
+      }
+    }
+  }
   
   /**
    *
