@@ -74,7 +74,7 @@ document.body.appendChild(someBlock.toElement())
 - #toElement
 
 
-## <a id="block"></a> Block
+## Block
 
 
 

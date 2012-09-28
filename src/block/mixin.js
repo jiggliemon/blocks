@@ -10,22 +10,24 @@ var blockCount = 0
 var mixin = {
 
   /**
-   *  Block#setChild
+   *  #setChild
    *  todo: Allow you to place where in the array you place the child
    *
    *  @param {string} key The childs name
    *  @param {block} value  
    */
-   setChild: function setChild (key, value /*, where */) {
+   setChild: function setChild ( key, value /*, where */ ) {
 
-    if(key === undefined || value === undefined) return
+    if (key === undefined || value === undefined) {
+      return
+    }
 
     var self = this
-      , child = make( self.getChildren(), key, [])
-      , el = self.getBoundElement(key)
+    var child = make( self.getChildren(), key, [])
+    var el = self.getBoundElement(key)
 
-    if(isArray(value)){
-      forEach(value, function(ardvark){
+    if ( isArray(value) ) {
+      forEach(value, function( ardvark ){
         child.push(ardvark)
         if (el) {
           el.appendChild(ardvark.toElement())
@@ -42,49 +44,49 @@ var mixin = {
   }
 
   /**
-   *
+   * #getChild
    *
    *
    */
-  ,getChild: function getChild (key) {
+  ,getChild: function getChild ( key ) {
     return this.getChildren()[key]
   }
   
   /**
-   *
+   * #removeChild
    *
    *
    */ 
-  ,removeChild: function removeChild (key) {
+  ,removeChild: function removeChild ( key ) {
     return this.removeChildren(key)
   }
 
   /**
-   *
+   * #setChildren
    *
    *
    */ 
   ,setChildren: function setChildren (children) {
-    if( !children ) {
+    if ( !children ) {
       return
     }
 
-    for( var key in children ) {
-      if( hasOwn(children,key) ) {
-        this.setChild( key, children[key] )
+    for ( var key in children ) {
+      if ( hasOwn(children,key) ) {
+        this.setChild(key, children[key])
       }
     }
   }
 
   /**
-   *  Block#getChildren
+   *  #getChildren
    *  
    *  getChildren(key [,...]) // { key: `Block` child }
    */
   ,getChildren: function getChildren ( arr ) {
     var  args = isArray(arr)? arr: slice( arguments )
-      , children
-      , _children = make(this,'_children',{})
+    var _children = make(this,'_children',{})
+    var children
        
     if ( args.length > 0 ) {
       children = {}
@@ -97,20 +99,20 @@ var mixin = {
   }
   
   /**
-   *  Block#getChildHtml
+   *  #getChildHtml
    *  
    *  getChildHtml(key) 
    */
   ,getChildHtml: function getChildHtml ( key ) {
-    var child = this.getChild( key)
-      , html = child && child.map( function (block) { 
-        return String(block) 
-      }).join('\n')
+    var child = this.getChild(key)
+    var html = child && child.map( function ( block ) { 
+      return String(block) 
+    }).join('\n')
     return html
   }
 
   /**
-   *  Block#removeChildren
+   *  #removeChildren
    *  removeChildren("key" [,...]) // { "key":  `Block` child }
    *
    *  returns Hash of removed children who's keys match the ones passed
@@ -118,18 +120,18 @@ var mixin = {
    *  @param {array || arguments} args The keys to remove from the children
    *  
    */
-  ,removeChildren: function removeChildren (arr) {
+  ,removeChildren: function removeChildren ( arr ) {
     var self = this  
-      , args = isArray(arr)? arr : slice(arguments,0)
-      , children = self.getChildren()
-      , subSet = {}
-      , rejected = {}
-      , key
+    var args = isArray(arr)? arr : slice(arguments,0)
+    var children = self.getChildren()
+    var subSet = {}
+    var rejected = {}
+    var key
 
-    if( args.length > 0 ) {
-      for( key in children ) {
-        if( hasOwn(children, key) ){
-          if( args.indexOf(key) === -1 ) {
+    if ( args.length > 0 ) {
+      for ( key in children ) {
+        if ( hasOwn(children, key) ) {
+          if ( args.indexOf(key) === -1 ) {
             subSet[key] = children[key]
           } else {
             rejected[key] = children[key] 
@@ -144,15 +146,16 @@ var mixin = {
   }
 
   /**
-   *  Blocks#emptyChildNode
+   *  #emptyChildNode
+   *
    *  This removes the children of a block placeholder;
    *  it doesn't remove the children from the block, it only 
    *  manipulates the node
    */
-  ,emptyChildNode: function emptyChildNode (key) {
+  ,emptyChildNode: function emptyChildNode ( key ) {
     var el = this.getBoundElement(key)
     if ( el && el.children.length ) {
-      forEach(el.children, function (child,index) {
+      forEach(el.children, function ( child, index ) {
         el.removeChild(child)
         delete el.children[child]
       })
@@ -160,36 +163,73 @@ var mixin = {
   }
 
   /**
-   *
+   * #attachEvents
    *
    *
    */
-  ,attachEvents: function () {
+  ,attachEvents: function attachEvents () {
     var self = this
     var events = make(this,'events',{})
     var el, identifier, event, fn, key
 
     for ( key in events ) {
-      k = key.split(':')
-      identifier = k[0]
-      event = k[1]
-      fn = ( typeOf(events[key],'function') )? events[key]: this[events[key]]
-      el = this.getBoundElement(identifier)
+      if ( hasOwn(events,key) ) {
+        k = key.split(':')
+        identifier = k[0]
+        event = k[1]
+        fn = ( typeof events[key] === 'function' )? events[key]: this[events[key]]
+        el = this.getBoundElement(identifier)
 
-      if ( el ) {
-        el.addEventListener(event, events[key].bind(this))
+        if ( el ) {
+          this.bindEvent(el, event.toLowerCase(), events[key].bind(this))
+        }
       }
     }
   }
+
+  /**
+   * #detachEvents
+   *
+   *
+   */
+  ,detachEvents: function () {
+
+  }
   
   /**
+   *  #bindEvent
    *
+   *
+   */
+  ,bindEvent: function bindEvent ( el, event, fn ) {
+    if ( el.addEventListener ) {
+      el.addEventListener(event, fn, false); 
+    } else if ( el.attachEvent ) {
+      el.attachEvent('on'+event, fn);
+    }
+  }
+
+  /**
+   *  #unbindEvent
+   *
+   *
+   */
+  ,unbindEvent: function unbindEvent ( el, event, fn ) {
+    if ( el.removeEventListener ) {
+      el.addEventListener(event, fn, false); 
+    } else if ( el.detachEvent ) {
+      el.detachEvent('on'+event, fn);
+    }
+  }
+
+  /**
+   *  #bindTemplate
    *
    */
   ,bindTemplate: function bindTemplate () {
     var self = this 
-      , blank = document.createElement('div')
-      , container = self.getContainer()
+    var blank = document.createElement('div')
+    var container = self.getContainer()
 
     blank.innerHTML = self.compile(self._context, self)
     
@@ -199,23 +239,25 @@ var mixin = {
   }
   
   /**
-   *
+   *  #bindElements
    *
    */
-  ,bindElements: function bindElements (el) {
+  ,bindElements: function bindElements ( el ) {
     var self = this
-      , bound
+    var bound
 
     if(!isElement(el)) {
       throw new Error(Block.errors.parseElements[0])
     }
+
     self.clearBoundElements()
     bound = el.querySelectorAll('[bind], block, b[name]')
 
-    forEach(bound, function (el) {
+    forEach(bound, function ( el ) {
       var key = el.getAttribute('bind')
-        , tagName = el.tagName.toLowerCase()
-      if( !key && ((tagName === 'block') || (tagName === 'b')) ) {
+      var tagName = el.tagName.toLowerCase()
+
+      if ( !key && ((tagName === 'block') || (tagName === 'b')) ) {
         key = el.getAttribute('name')
       }
       self.setBoundElement(key,el)
@@ -223,24 +265,24 @@ var mixin = {
   }
   
   /**
-   *
+   *  #bindChildren
    *
    */
   ,bindChildren : function bindChildren () {
     var self = this
-      , children = self.getChildren()
-      , placeholder
-      , module
-      , parent
-      , placeholders = []
+    var children = self.getChildren()
+    var placeholder
+    var module
+    var parent
+    var placeholders = []
     
-    for(key in children) {
+    for ( key in children ) {
       placeholder = null
-      if( hasOwn(children, key) ){
+      if ( hasOwn(children, key) ) {
         modules = children[key]
         placeholder = self.getBoundElement(key)
-        if(!!(placeholder) && isArray(modules) && modules.length > 0) {
-          forEach( modules, function( module ){
+        if ( !!(placeholder) && isArray(modules) && modules.length > 0 ) {
+          forEach( modules, function ( module ) {
             placeholder.appendChild(module.toElement())
           })
         }
@@ -249,37 +291,36 @@ var mixin = {
   }
 
   /**
-   *
+   *  #clearBoundElements
    *
    */
-  ,clearBoundElements: function clearBoundElements (arr) {
+  ,clearBoundElements: function clearBoundElements ( arr ) {
     var args = isArray(arr)? arr: slice(arguments)
-      , els = this.getBoundElements(args)
+    var els = this.getBoundElements(args)
 
     this._bound = {}
   }
 
   /**
-   *
+   *  #setBoundElements
    *
    */
-  ,setBoundElement: function setBoundElement (key, element) {
-
+  ,setBoundElement: function setBoundElement ( key, element ) {
     var boundElements = make(this,'_bound',{})
-      , bound = boundElements[key] = boundElements[key] || []
+    var bound = boundElements[key] = boundElements[key] || []
     bound.push(element)
   }
 
   /**
-   *
+   *  #getBoundElements
    *
    */
-  ,getBoundElements: function getBoundElements (args) {
+  ,getBoundElements: function getBoundElements ( args ) {
     var self = this
-      , args = isArray(args) ? args: slice(arguments)
-      , elements = {}
+    var args = isArray(args) ? args: slice(arguments)
+    var elements = {}
 
-    if (args.length) {
+    if ( args.length ) {
       forEach(args, function (el) {
         elements[el] = self.getBoundElement(el)
       })
@@ -291,21 +332,21 @@ var mixin = {
   }
   
   /**
-   *
+   *  #getBoundElement
    *
    */
-  ,getBoundElement: function getBoundElement (key) {
+  ,getBoundElement: function getBoundElement ( key ) {
     var element
-      , _bound = make(this,'_bound',{})
+    var _bound = make(this,'_bound',{})
 
-    if(!(element = _bound[key])){
+    if ( !(element = _bound[key]) ) {
       return undefined
     }
     return (element.length === 1) ? element[0]: element
   }
  
   /**
-   *
+   *  #getContainer
    *
    */ 
   ,getContainer: function getContainer () {
@@ -314,30 +355,31 @@ var mixin = {
   }
 
   /**
-   *
+   *  #setContainer
    *
    */ 
-  ,setContainer: function setContainer (container) {
+  ,setContainer: function setContainer ( container ) {
     return this.container = (container) ? 
-                  ((typeof container === 'string')?document.createElement(container):container)
+                  ((typeof container === 'string') ? document.createElement(container):container)
                   :document.createElement('div')
   }
   
-  ,clean: function clean () {
+  ,cleanUp: function cleanUp () {
 
   }
+
   /**
-   *
+   *  #getUniqueId
    *
    *
    */ 
-  ,getUniqueId: function () {
+  ,getUniqueId: function getUniqueId () {
     var self = this
     return self._uniqueId = make(self, '_uniqueId', Date.now().toString(36) + (blockCount++))
   }
  
   /**
-   *
+   *  #toString
    *
    *
    */ 
@@ -346,48 +388,47 @@ var mixin = {
   }
 
   /**
-   *
+   *  #fillContainer
    *
    */
-  ,fillContainer: function fillContainer (frag) {
-    var  self = this
-        ,container = self.getContainer()
-        ,clone = container.cloneNode(true)
-        ,frag = frag || document.createDocumentFragment()
+  ,fillContainer: function fillContainer ( frag ) {
+    var self = this
+    var container = self.getContainer()
+    var clone = container.cloneNode(true)
+    var frag = frag || document.createDocumentFragment()
     
     self.bindElements(clone)
-
     self.attachEvents && self.attachEvents.call(this)
 
-    while(clone.children.length) {
+    while ( clone.children.length ) {
       frag.appendChild(clone.children[0])
     }
 
     self.bindChildren()
 
-
-    if(self.placeholder) {
+    if ( self.placeholder ) {
       self.placeholder.parentNode.replaceChild(frag, self.placeholder)
       delete self.placeholder
     }
   }
 
   /**
-   *
+   *  #toElement
    *
    *
    */ 
   ,toElement: function toElement () {
     var frag = document.createDocumentFragment()
+    var placeholder
 
-    if(this.ready) {
+    if ( this.ready ) {
       this.fillContainer(frag)
     } else {
-      var placeholder = this.placeholder = document.createElement('div')
+      placeholder = this.placeholder = document.createElement('div')
       placeholder.setAttribute('class','block-loading')
       frag.appendChild(placeholder)
     }
-
+    this.fireEvent('after:toElement')
     return frag
   }
 }

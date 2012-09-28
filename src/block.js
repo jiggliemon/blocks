@@ -1,1 +1,1 @@
-define(['./block/index'], function(b){return b})
+module.exports = require('./block/index')
