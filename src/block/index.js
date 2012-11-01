@@ -45,7 +45,7 @@ function Block (arg1,arg2,arg3  ) {
       self.setOptions(arg2)
     }
     
-    if ( typeOf(arg3, object) ) {
+    if ( typeOf(arg3, 'object') ) {
       extend(this, arg3)
     }
   }
