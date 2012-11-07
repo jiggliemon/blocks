@@ -1,4 +1,6 @@
+var blocks = require('../main')
 var BlockMixin = require('./mixin')
+
 var TemplateMixin = require('yate/mixin')
 var MediatorMixin = require('yeah/mixin')
 var hasOwn = require('yaul/hasOwn')
@@ -9,12 +11,12 @@ var make = require('yaul/make')
 var typeOf = require('yaul/typeOf')
 var css = require('text!./styles.css')
 
-;(function (doc) {
-  var style = doc.createElement('style')
+;(function () {
+  var style = document.createElement('style')
   style.innerHTML = css
-  var s = doc.getElementsByTagName('script')[0]; 
+  var s = document.getElementsByTagName('script')[0]; 
   s.parentNode.insertBefore(style, s)
-}(document))
+}())
 
 function extend (obj) {
   forEach(slice(arguments, 1),function(source){
@@ -28,38 +30,26 @@ function extend (obj) {
 }
 
 /** @constructor */
-function Block (arg1,arg2,arg3  ) {
+function Block ( arg1, arg2 ) {
 
   if ( !(this instanceof Block) ) {
-    return new Block(arg1, arg2, arg3)
+    return new Block( arg1, arg2 )
   }
   
   var self = this
   // new Block('name', {
   //   ... options ...
   // }[,{...methods...}])
-  if ( typeOf(arg1, 'string') ) {
+  var type1 = typeOf(arg1)
+  var type2 = typeOf(arg2)
+
+  if ( type1 === 'string' ) {
     self.key = arg1
-
-    if( typeOf(arg2, 'object') ) {
-      self.setOptions(arg2)
-    }
-    
-    if ( typeOf(arg3, 'object') ) {
-      extend(this, arg3)
-    }
+    self.setOptions(arg2 || {})
+  } else if (type1 === 'object' || type1 === 'undefined') {
+    self.setOptions(arg1 || {})
   }
 
-  // new Block({
-  //  ... options ...
-  // }[, {... methods ...}]);
-  if ( typeOf(arg1, 'object') ) {
-    self.setOptions(arg1)
-
-    if( typeOf(arg2, 'object') ) {
-      extend(this, arg2)
-    }
-  }
 
   self.initialize(self.options)
 }
@@ -94,7 +84,7 @@ Block.prototype = extend({
     
     self.setChildren( options.children )
     self.setContainer( options.container )
-    self.setTemplate( options.template )
+    self.setTemplate( options.template || this.template )
   }
 
   /**
@@ -129,6 +119,37 @@ Block.prototype = extend({
 
 
 }, TemplateMixin, MediatorMixin, BlockMixin )
+
+Block.create = function ( methods ) {
+  function constructor ( arg1, arg2 ) {
+    if (typeOf(methods,'object')) {
+      extend(this, methods)
+    }
+
+    var self = this
+    // new Block('name', {
+    //   ... options ...
+    // }[,{...methods...}])
+    var type1 = typeOf(arg1)
+    var type2 = typeOf(arg2)
+
+    if ( type1 === 'string' ) {
+      self.key = arg1
+      self.setOptions(arg2 || {})
+    } else if (type1 === 'object' || type1 === 'undefined') {
+      self.setOptions(arg2 || {})
+    }
+
+    self.initialize(self.options)
+
+  }
+
+  constructor.prototype = extend({}, Block.prototype)
+
+  return constructor
+}
+
+blocks.block = Block
 
 module.exports = Block
 

@@ -431,6 +431,13 @@ var mixin = {
     this.fireEvent('after:toElement')
     return frag
   }
+
+  ,inject: function (where) {
+    if (typeof where === 'string') {
+      where = document.getElementById(where)
+    }
+    where.appendChild(this.toElement())
+  }
 }
 
 mixin.bound = mixin.getBoundElement

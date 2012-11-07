@@ -1,15 +1,9 @@
-//@ sourceURL = blocks/main.js
 define([
-   './index'
-  ,'yale'
-  ,'yeah/mixin'
+   'yeah/mixin'
   ,'yaul/extend'
   ,'yaul/slice'
 ], function ( 
-   config
-  ,Layout 
-  ,Block 
-  ,MediatorMixin
+   MediatorMixin
   ,extend
   ,slice
 ){
@@ -25,30 +19,6 @@ define([
     }
 
     ,constructors: {
-       block: Block
-      ,layout: Layout
-    }
-
-    ,create: function (name) {
-      var self = this
-        , created
-
-      // if the first argument is a string
-      // return an instance of that key
-      if ( typeof name === 'string' ) {
-        if ( self.constructors[name] ) { 
-          created = self.constructors[name].apply(this, slice(arguments, 1))
-        }
-      } else {
-        // return an object w/ the Blocks obj as it's prototype
-        created = extend((function () {
-          var fn = function () {};
-          fn.prototype = Blocks;
-          return new fn();
-        }()), name || {})
-      }
-      
-      return created
     }
 
     ,register: function (key,block) {
@@ -94,6 +64,6 @@ define([
       return self._.blocks[key]
     }
   }, MediatorMixin)
-  Blocks.config
+
   return Blocks
 })
