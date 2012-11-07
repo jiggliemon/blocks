@@ -50,31 +50,99 @@ document.body.appendChild(someBlock.toElement())
 - [Block](#block)
 
 #### Mixin API
-- #setChild
-- #getChild
-- #removeChild
-- #setChildren
-- #getChildren
-- #removeChildren
-- #getChildHtml
-- #emptyChildNode
-- #attachEvents
-- #bindTemplate
-- #bindElements
-- #bindChildren
-- #clearBoundElements
-- #setBoundElement | #bound
-- #getBoundElements
-- #getBoundElement
-- #getContainer
-- #setContainer
-- #getUniqueId
-- #toString
-- #fillContainer
-- #toElement
+- [#setChild](#setChild)
+- [#getChild](#getChild)
+- [#removeChild](#removeChild)
+- [#setChildren](#setChildren)
+- [#getChildren](#getChildren)
+- [#removeChildren](#removeChildren)
+- *[#getChildHtml](#getChildHtml)
+- *[#emptyChildNode](#emptyChildNode)
+- [#attachEvents](#attachEvents)
+- [#bindTemplate](#bindTemplate)
+- *[#bindElements](#bindElements)
+- *[#bindChildren](#bindChildren)
+- *[#clearBoundElements](#clearBoundElements)
+- [#setBoundElement](#setBoundElement) 
+- [#getBoundElement | #bound](#getBoundElement)
+- *[#getBoundElements](#getBoundElements) 
+- [#setContainer](#setContainer)
+- [#getContainer](#getContainer)
+- [#getUniqueId](#getUniqueId)
+- *[#toString](#toString)
+- *[#fillContainer](#fillContainer)
+- [#toElement](#toElement)
+- [#inject](#inject)
 
+_* indicates it may or maynot be removed._
 
 ## Block
+
+Options:
+
+- template {string|path} 
+- inject {string|element}
+
+#### Basic construction
+
+```js
+var instance = new Block(/* object */ {})
+```
+
+#### Construction with optional identifier
+
+```js
+var Block = require('blocks/block')
+var Blocks = require('blocks')
+
+var instance = new Block (/* string */ 'some.identifier', /* object */ {})
+Blocks.reference('some.identifier') == instance
+```
+
+## setChild
+
+## getChild
+
+## removeChild
+
+## setChildren
+
+## getChildren
+
+## removeChildren
+
+## getChildHtml
+
+## emptyChildNode
+
+## attachEvents
+
+## bindTemplate
+
+## bindElements
+
+## bindChildren
+
+## clearBoundElements
+
+## setBoundElement
+
+## getBoundElement | #bound
+
+## setContainer
+
+## getContainer
+
+## getUniqueId
+
+## fillContainer
+
+## toElement
+
+## inject
+
+
+
 
 
 
