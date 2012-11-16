@@ -181,7 +181,7 @@ var mixin = {
         el = this.getBoundElement(identifier)
 
         if ( el ) {
-          this.bindEvent(el, event.toLowerCase(), events[key].bind(this))
+          this.bindEvent(el, event.toLowerCase(), events[key])
         }
       }
     }
@@ -202,10 +202,15 @@ var mixin = {
    *
    */
   ,bindEvent: function bindEvent ( el, event, fn ) {
+    var self = this
     if ( el.addEventListener ) {
-      el.addEventListener(event, fn, false); 
+      el.addEventListener(event,  function (e) {
+        fn.call(this, e, self)
+      }, false); 
     } else if ( el.attachEvent ) {
-      el.attachEvent('on'+event, fn);
+      el.attachEvent('on'+event, function (e) {
+        fn.call(this, e, self)
+      });
     }
   }
 
