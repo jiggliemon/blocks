@@ -4,6 +4,7 @@ var isArray = require('yaul/isArray')
 var isElement = require('yaul/isElement')
 var hasOwn = require('yaul/hasOwn')
 var slice = require('yaul/slice')
+var trim = require('yaul/trim')
 //var querySelect = require('yaul/querySelect')
 
 var blockCount = 0
@@ -169,19 +170,28 @@ var mixin = {
    */
   ,attachEvents: function attachEvents () {
     var self = this
-    var events = make(this,'events',{})
-    var el, identifier, event, fn, key
+    var _events = make(this,'events',{})
+    var el, identifier, events, event, e, fn, key, k
 
-    for ( key in events ) {
-      if ( hasOwn(events,key) ) {
-        k = key.split(':')
-        identifier = k[0]
-        event = k[1]
-        fn = ( typeof events[key] === 'function' )? events[key]: this[events[key]]
-        el = this.getBoundElement(identifier)
+    for ( key in _events ) {
+      if ( hasOwn(_events,key) ) {
+        events = _events[key]
+        el = self.getBoundElement(key)
 
-        if ( el ) {
-          this.bindEvent(el, event.toLowerCase(), events[key])
+        if (el) {
+          for ( k in events ) {
+            if ( hasOwn(events, k) ) {
+              eventKeys = k.split(',')
+              event = events[k]
+
+              while (eventKeys.length) {
+                e = eventKeys.pop()
+                if ( e ) {
+                  self.bindEvent(el, trim(e).toLowerCase(), event)
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -442,6 +452,7 @@ var mixin = {
       where = document.getElementById(where)
     }
     where.appendChild(this.toElement())
+    return this
   }
 }
 

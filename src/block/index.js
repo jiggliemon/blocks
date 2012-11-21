@@ -120,13 +120,16 @@ Block.prototype = extend({
 
 }, TemplateMixin, MediatorMixin, BlockMixin )
 
-Block.create = function ( methods ) {
+Block.create = function ( defaults, methods ) {
   function constructor ( arg1, arg2 ) {
-    if (typeOf(methods,'object')) {
-      extend(this, methods)
-    }
-
     var self = this
+
+    if (typeOf(methods,'object')) {
+      extend(self, methods)
+    }
+    
+    Block.prototype.setOptions.call(self, defaults)
+    
     // new Block('name', {
     //   ... options ...
     // }[,{...methods...}])
@@ -139,7 +142,7 @@ Block.create = function ( methods ) {
     } else if (type1 === 'object' || type1 === 'undefined') {
       self.setOptions(arg2 || {})
     }
-
+    
     self.initialize(self.options)
 
   }
