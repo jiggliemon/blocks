@@ -1,5 +1,7 @@
 # Blocks
 
+## A Block at a glance
+
 ``` js
 /*
 <div bind="header" class="header">
@@ -12,7 +14,7 @@
 
 var Block = require('blocks/block')
 
-var someBlock = new Block('some', {
+var someBlock = block('some', {
     template: '\
         <div bind="header" class="header">\
         </div>\
@@ -80,67 +82,236 @@ _* indicates it may or maynot be removed._
 
 Options:
 
-- template {string|path} 
-- inject {string|element}
+- **template** {string|path} 
+- **children** {object}
+- **events** {object}
+- **inject** {string|element}
 
 #### Basic construction
 
 ```js
-var instance = new Block(/* object */ {})
+var instance = block(/* object */ {})
 ```
 
 #### Construction with optional identifier
 
 ```js
-var Block = require('blocks/block')
-var Blocks = require('blocks')
+var block = require('blocks/block')
+var blocks = require('blocks')
 
-var instance = new Block (/* string */ 'some.identifier', /* object */ {})
-Blocks.reference('some.identifier') == instance
+var instance = block ('some.identifier',{})
+blocks.reference('some.identifier') == instance
 ```
 
 ## setChild
 
+Adds a child block.
+
+#### Arguments:
+
+1. **key** {*String*} child container reference
+2. **block** {*Block* || *Array of Blocks*}
+
+#### Example
+
+```js
+var instance = block({
+    template: '<div class="wrapper"><b name="drop"></b></div>'
+})
+instance.setChild('drop', block({
+        template: '<h1>Hello</h1>'
+    })
+)
+
+instance.setChild('drop', [
+     block({template: '<h1>Hello Again</h1>'})
+    ,block({template: '<p>Do you like my hat?</p>'})
+])
+```
+
+
+
+
+
+
+
 ## getChild
+
+
+
+
+
+
 
 ## removeChild
 
+
+
+
+
+
+
 ## setChildren
+
+
+
+
+
+
 
 ## getChildren
 
+
+
+
+
+
+
 ## removeChildren
+
+
+
+
+
+
 
 ## getChildHtml
 
+
+
+
+
+
+
 ## emptyChildNode
+
+
+
+
+
+
 
 ## attachEvents
 
+
+
+
+
+
+
 ## bindTemplate
+
+
+
+
+
+
 
 ## bindElements
 
+
+
+
+
+
+
 ## bindChildren
+
+
+
+
+
+
 
 ## clearBoundElements
 
+
+
+
+
+
+
 ## setBoundElement
+
+
+
+
+
+
 
 ## getBoundElement | #bound
 
+
+
+
+
+
+
 ## setContainer
+
+
+
+
+
+
 
 ## getContainer
 
+
+
+
+
+
+
 ## getUniqueId
+
+Returns the unique identifing `string` for the block instance.  This method is intended mostly for internal use.
+
+#### Example
+
+```js
+instance.getUniqueId() // h9s5ep2c1
+```
+
+
+
+
+
+
 
 ## fillContainer
 
+
+
+
+
+
+
 ## toElement
+
+
+
+
+
+
 
 ## inject
 
+Sugar syntax for `document.getElementById('some-id').appendChild(instance.toElement())`.
+
+#### Arguments
+
+1. **where** {*Element* || *String*} Either the node reference, or the id of a DOM node of the element of which to inject the block into
+
+#### Example
+
+```js
+// with a node reference passed in
+instance.inject(document.body)
+
+// with a node ID string passed
+instance.inject('some-id')
+```
 
 
 

@@ -435,15 +435,17 @@ var mixin = {
   ,toElement: function toElement () {
     var frag = document.createDocumentFragment()
     var placeholder
+    var self = this
 
-    if ( this.ready ) {
-      this.fillContainer(frag)
+    if ( self.ready ) {
+      self.fillContainer(frag)
     } else {
-      placeholder = this.placeholder = document.createElement('div')
+      placeholder = self.placeholder = document.createElement('div')
       placeholder.setAttribute('class','block-loading')
       frag.appendChild(placeholder)
     }
-    this.fireEvent('after:toElement')
+    self.fireEvent('after:toElement')
+    
     return frag
   }
 

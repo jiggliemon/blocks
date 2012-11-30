@@ -123,10 +123,6 @@ Block.prototype = extend({
 Block.create = function ( defaults, methods ) {
   function constructor ( arg1, arg2 ) {
     var self = this
-
-    if (typeOf(methods,'object')) {
-      extend(self, methods)
-    }
     
     Block.prototype.setOptions.call(self, defaults)
     
@@ -142,12 +138,12 @@ Block.create = function ( defaults, methods ) {
     } else if (type1 === 'object' || type1 === 'undefined') {
       self.setOptions(arg2 || {})
     }
-    
-    self.initialize(self.options)
 
+    self.construct && self.construct.call(this, self.options)
+    self.initialize(self.options)
   }
 
-  constructor.prototype = extend({}, Block.prototype)
+  constructor.prototype = extend(methods || {}, Block.prototype)
 
   return constructor
 }
