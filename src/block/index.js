@@ -30,10 +30,10 @@ function extend (obj) {
 }
 
 /** @constructor */
-function Block ( arg1, arg2 ) {
+function Block ( arg1, arg2, arg3 ) {
 
   if ( !(this instanceof Block) ) {
-    return new Block( arg1, arg2 )
+    return new Block( arg1, arg2, arg3 )
   }
   
   var self = this
@@ -46,6 +46,8 @@ function Block ( arg1, arg2 ) {
   if ( type1 === 'string' ) {
     self.key = arg1
     self.setOptions(arg2 || {})
+    blocks.register(arg1,self)
+
   } else if (type1 === 'object' || type1 === 'undefined') {
     self.setOptions(arg1 || {})
   }
@@ -61,8 +63,6 @@ Block.prototype = extend({
     onReady: ['template:ready', function blockReady () {
       var self = this
       self.ready = true
-
-      self.setContext(self.options.context)
       self.bindTemplate()
       self.fillContainer()
     }]
@@ -81,7 +81,11 @@ Block.prototype = extend({
     //   self.attachEvents = options.attachEvents
     // }
     make(this,'events', options.events || {})
-    
+
+    if (options.lang || options.context) {
+      self.setContext(extend({},options.lang, options.context))
+    }
+    self.setContext('id',self.getUniqueId())
     self.setChildren( options.children )
     self.setContainer( options.container )
     self.setTemplate( options.template || this.template )
@@ -135,6 +139,7 @@ Block.create = function ( defaults, methods ) {
     if ( type1 === 'string' ) {
       self.key = arg1
       self.setOptions(arg2 || {})
+      blocks.register(arg1,self)
     } else if (type1 === 'object' || type1 === 'undefined') {
       self.setOptions(arg2 || {})
     }

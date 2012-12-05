@@ -26,15 +26,24 @@ var mixin = {
     var self = this
     var child = make( self.getChildren(), key, [])
     var el = self.getBoundElement(key)
+    var block, type = typeof(value)
 
-    if ( isArray(value) ) {
-      forEach(value, function( ardvark ){
-        child.push(ardvark)
+    if ( isArray(value)) {
+      forEach(value, function( instance ){
+        type = typeof instance
+        block = (type == 'function')? new instance : 
+                    (type == 'array')   ? new instance[0](instance[1],instance[2],instance[3]):
+                    instance
+
+        child.push(block)
         if (el) {
-          el.appendChild(ardvark.toElement())
+          el.appendChild(block.toElement())
         }
       })
     } else {
+      block = (type == 'function')? new value : 
+              (type == 'array')   ? new value[0](value[1],value[2],value[3]):
+              value
       child.push(value)
       if (el) {
         el.appendChild(value.toElement())
