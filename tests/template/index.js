@@ -1,4 +1,0 @@
-
-define(['Test'], function() {
-  return {};
-});

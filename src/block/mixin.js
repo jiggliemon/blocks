@@ -86,6 +86,7 @@ var mixin = {
         this.setChild(key, children[key])
       }
     }
+    return this
   }
 
   /**
@@ -170,6 +171,7 @@ var mixin = {
         delete el.children[child]
       })
     }
+    return this
   }
 
   /**
@@ -204,6 +206,7 @@ var mixin = {
         }
       }
     }
+    return self
   }
 
   /**
@@ -231,6 +234,7 @@ var mixin = {
         fn.call(this, e, self)
       });
     }
+    return self
   }
 
   /**
@@ -244,6 +248,7 @@ var mixin = {
     } else if ( el.detachEvent ) {
       el.detachEvent('on'+event, fn);
     }
+    return self
   }
 
   /**
@@ -256,10 +261,12 @@ var mixin = {
     var container = self.getContainer()
 
     blank.innerHTML = self.compile(self._context, self)
-    
-    while ( blank.children.length ) {
-      container.appendChild(blank.children[0])
+    container.innerHTML = ""
+
+    while ( blank.childNodes.length ) {
+      container.appendChild(blank.childNodes[0])
     }
+    return self
   }
   
   /**
@@ -286,6 +293,7 @@ var mixin = {
       }
       self.setBoundElement(key,el)
     })
+    return self
   }
   
   /**
@@ -312,6 +320,7 @@ var mixin = {
         }
       }
     }
+    reuturn self
   }
 
   /**
@@ -323,6 +332,7 @@ var mixin = {
     var els = this.getBoundElements(args)
 
     this._bound = {}
+    return this
   }
 
   /**
@@ -333,6 +343,7 @@ var mixin = {
     var boundElements = make(this,'_bound',{})
     var bound = boundElements[key] = boundElements[key] || []
     bound.push(element)
+    return this
   }
 
   /**
@@ -424,8 +435,8 @@ var mixin = {
     self.bindElements(clone)
     self.attachEvents && self.attachEvents.call(this)
 
-    while ( clone.children.length ) {
-      frag.appendChild(clone.children[0])
+    while ( clone.childNodes.length ) {
+      frag.appendChild(clone.childNodes[0])
     }
 
     self.bindChildren()
@@ -434,6 +445,7 @@ var mixin = {
       self.placeholder.parentNode.replaceChild(frag, self.placeholder)
       delete self.placeholder
     }
+    return self
   }
 
   /**
@@ -441,10 +453,14 @@ var mixin = {
    *
    *
    */ 
-  ,toElement: function toElement () {
+  ,toElement: function toElement (forceRedraw) {
     var frag = document.createDocumentFragment()
     var placeholder
     var self = this
+
+    if (forceRedraw) {
+      this.redraw()
+    }
 
     if ( self.ready ) {
       self.fillContainer(frag)
@@ -458,12 +474,19 @@ var mixin = {
     return frag
   }
 
-  ,inject: function (where) {
+  ,inject: function (where, forceRedraw) {
     if (typeof where === 'string') {
       where = document.getElementById(where)
     }
-    where.appendChild(this.toElement())
+    where.appendChild(this.toElement(forceRedraw))
     return this
+  }
+
+  ,redraw: function () {
+    var self = this
+    self.bindTemplate()
+    self.fillContainer()
+    return self
   }
 }
 

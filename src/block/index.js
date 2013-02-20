@@ -129,7 +129,7 @@ Block.create = function ( defaults, methods ) {
     var self = this
     
     Block.prototype.setOptions.call(self, defaults)
-    
+
     // new Block('name', {
     //   ... options ...
     // }[,{...methods...}])
@@ -141,11 +141,12 @@ Block.create = function ( defaults, methods ) {
       self.setOptions(arg2 || {})
       blocks.register(arg1,self)
     } else if (type1 === 'object' || type1 === 'undefined') {
-      self.setOptions(arg2 || {})
+      self.setOptions(arg1 || {})
     }
 
     self.construct && self.construct.call(this, self.options)
     self.initialize(self.options)
+
   }
 
   constructor.prototype = extend(methods || {}, Block.prototype)
