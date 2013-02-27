@@ -320,7 +320,7 @@ var mixin = {
         }
       }
     }
-    reuturn self
+    return self
   }
 
   /**
