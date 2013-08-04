@@ -1,8 +1,8 @@
+var lodash = require('lodash')
 var make = require('yaul/make')
 var forEach = require('yaul/forEach')
-var isArray = require('yaul/isArray')
+var isArray = lodash.isArray
 var isElement = require('yaul/isElement')
-var hasOwn = require('yaul/hasOwn')
 var slice = require('yaul/slice')
 var trim = require('yaul/trim')
 //var querySelect = require('yaul/querySelect')
@@ -77,15 +77,13 @@ var mixin = {
    *
    */ 
   ,setChildren: function setChildren (children) {
+    var self = this
     if ( !children ) {
       return
     }
-
-    for ( var key in children ) {
-      if ( hasOwn(children,key) ) {
-        this.setChild(key, children[key])
-      }
-    }
+    forOwn(children, function ( child, key) {
+        self.setChild(key, child)
+    })
     return this
   }
 
@@ -95,8 +93,8 @@ var mixin = {
    *  getChildren(key [,...]) // { key: `Block` child }
    */
   ,getChildren: function getChildren ( arr ) {
-    var  args = isArray(arr)? arr: slice( arguments )
-    var _children = make(this,'_children',{})
+    var  args = isArray(arr)? arr: Array.prototype.slice.call( arguments, 0 )
+    var _children = this._children = this._children || {}
     var children
        
     if ( args.length > 0 ) {
@@ -133,23 +131,22 @@ var mixin = {
    */
   ,removeChildren: function removeChildren ( arr ) {
     var self = this  
-    var args = isArray(arr)? arr : slice(arguments,0)
+    var args = isArray(arr)? arr : Array.prototype.slice.call(arguments,0)
     var children = self.getChildren()
     var subSet = {}
     var rejected = {}
     var key
 
     if ( args.length > 0 ) {
-      for ( key in children ) {
-        if ( hasOwn(children, key) ) {
-          if ( args.indexOf(key) === -1 ) {
-            subSet[key] = children[key]
-          } else {
-            rejected[key] = children[key] 
-            self.emptyChildNode(key)      
-          }
+      forOwn(children, function(child, key){
+        if ( args.indexOf(key) === -1 ) {
+          subSet[key] = child
+        } else {
+          rejected[key] = child 
+          self.emptyChildNode(key)      
         }
-      }
+      })
+
       self._children = subSet
     }
       
@@ -174,49 +171,51 @@ var mixin = {
     return this
   }
 
-  /**
-   * #attachEvents
-   *
-   *
-   */
-  ,attachEvents: function attachEvents () {
-    var self = this
-    var _events = make(this,'events',{})
-    var el, identifier, events, event, e, fn, key, k
+  // /**
+  //  * #attachEvents
+  //  *
+  //  *
+  //  */
+  // ,attachEvents: function attachEvents () {
+  //   var self = this
+  //   self.events = (this.events || {})
+  //   var el, identifier, events, event, e, fn, key, k
 
-    for ( key in _events ) {
-      if ( hasOwn(_events,key) ) {
-        events = _events[key]
-        el = self.getBoundElement(key)
+  //   forOwn(self.events, function (_event,key) {
+  //     events = _event
+  //     el = self.getBoundElement(key)
 
-        if (el) {
-          for ( k in events ) {
-            if ( hasOwn(events, k) ) {
-              eventKeys = k.split(',')
-              event = events[k]
+  //     if (el) {
+  //       forOwn(events, function (event) {
 
-              while (eventKeys.length) {
-                e = eventKeys.pop()
-                if ( e ) {
-                  self.bindEvent(el, trim(e).toLowerCase(), event)
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    return self
-  }
+  //       })
+  //       for ( k in events ) {
+  //         if ( hasOwn(events, k) ) {
+  //           eventKeys = k.split(',')
+  //           event = events[k]
 
-  /**
-   * #detachEvents
-   *
-   *
-   */
-  ,detachEvents: function () {
+  //           while (eventKeys.length) {
+  //             e = eventKeys.pop()
+  //             if ( e ) {
+  //               self.bindEvent(el, trim(e).toLowerCase(), event)
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   })
 
-  }
+  //   return self
+  // }
+
+  // /**
+  //  * #detachEvents
+  //  *
+  //  */
+   
+  // ,detachEvents: function () {
+
+  // }
   
   /**
    *  #bindEvent
@@ -340,7 +339,7 @@ var mixin = {
    *
    */
   ,setBoundElement: function setBoundElement ( key, element ) {
-    var boundElements = make(this,'_bound',{})
+    var boundElements = this._bound = this._bound || {} 
     var bound = boundElements[key] = boundElements[key] || []
     bound.push(element)
     return this
