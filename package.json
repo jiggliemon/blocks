@@ -19,7 +19,9 @@
     "type": "git",
     "url": "git://github.com/jiggliemon/blocks.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "lodash":"*"    
+  },
   "devDependencies": {},
   "optionalDependencies": {},
   "engines": {
