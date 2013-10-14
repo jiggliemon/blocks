@@ -1,0 +1,1 @@
+define(['./block'], function (b) {return b})

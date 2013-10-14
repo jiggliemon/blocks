@@ -1,10 +1,9 @@
 ({
    baseUrl: "../../"
   ,packages:[
-     {name:'blocks',location:'blocks/src'}
-    ,{name:'yaul',location:'yaul/src'}
-    ,{name:'yeah',location:'yeah/src',main:'index'}
-    ,{name:'yate',location:'yate/src',main:'index'}
+     {name:'blocks',location:'blocks'}
+    ,{name:'yeah',location:'yeah',main:'index'}
+    ,{name:'yate',location:'yate',main:'index'}
   ]
   ,include: ['blocks/block','yeah','yate']
   ,optimize: 'none'
