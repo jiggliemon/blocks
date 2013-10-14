@@ -1,11 +1,24 @@
 var lodash = require('lodash')
-var make = require('yaul/make')
-var forEach = require('yaul/forEach')
+var forEach = lodash.forEach
 var isArray = lodash.isArray
-var isElement = require('yaul/isElement')
-var slice = require('yaul/slice')
-var trim = require('yaul/trim')
+var forOwn = lodash.forOwn
+var trim = lodash.trim
 //var querySelect = require('yaul/querySelect')
+
+//Returns true if it is a DOM element    
+function isElement(o){
+  return (
+    typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+    o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string");
+}
+
+function make (object, key, def) {
+  if (!(key in object)) {
+    object[key] = def
+  }
+  return object[key]
+}
+
 
 var blockCount = 0
 var mixin = {
@@ -327,7 +340,7 @@ var mixin = {
    *
    */
   ,clearBoundElements: function clearBoundElements ( arr ) {
-    var args = isArray(arr)? arr: slice(arguments)
+    var args = isArray(arr)? arr: Array.prototype.slice.call(arguments)
     var els = this.getBoundElements(args)
 
     this._bound = {}
@@ -351,7 +364,7 @@ var mixin = {
    */
   ,getBoundElements: function getBoundElements ( args ) {
     var self = this
-    var args = isArray(args) ? args: slice(arguments)
+    var args = isArray(args) ? args: Array.prototype.slice.call(arguments)
     var elements = {}
 
     if ( args.length ) {

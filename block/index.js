@@ -1,5 +1,3 @@
-var blocks = require('../main')
-
 /* mixins */
 var BlockMixin = require('./mixin')
 var TemplateMixin = require('yate/mixin')
@@ -41,7 +39,6 @@ function Block ( arg1, arg2, arg3 ) {
   if ( lodash.isString(arg1)) {
     self.key = arg1
     self.setOptions(arg2 || {})
-    blocks.register(arg1,self)
   } else if ( lodash.isObject(arg1) || lodash.isUndefined(arg1) ) {
     self.setOptions(arg1 || {})
   }
@@ -130,7 +127,6 @@ Block.create = function ( defaults, methods ) {
     if ( lodash.isString(arg1) ) {
       self.key = arg1
       self.setOptions(arg2 || {})
-      blocks.register(arg1,self)
     } else if ( lodash.isObject(arg1) || lodash.isUndefined(arg1) ) {
       self.setOptions(arg1 || {})
     }
@@ -144,8 +140,6 @@ Block.create = function ( defaults, methods ) {
 
   return constructor
 }
-
-blocks.block = Block
 
 module.exports = Block
 
