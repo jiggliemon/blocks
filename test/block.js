@@ -5,13 +5,13 @@ describe ('block', function () {
   
   var Construct, constructInstance 
   beforeEach(function () {
-    Construct = block.create('Constructor', {
+    Construct = block.begets({
       "template": "<h1>Hello</h1>"
     })
     constructInstance = new Construct
   })
 
-  describe('block.create', function () {
+  describe('block.begets', function () {
     it('should return a function', function () {
       assert.equal('function', typeof Construct)
     })
@@ -21,23 +21,24 @@ describe ('block', function () {
 
   })
 
-  describe('block#reference', function () {
-    it('should reference a child block by name when present.', function () {
-      var SomeBlock = block.create('SomeBlock')
-
-      var parent = new Construct
-      var child = new SomeBlock({ name: 'kid' })
-
-      parent.setBlock(child)
-
-      assert.equal(child, parent.reference('kid'))
-    })
-  })
-
   describe('block#render', function () {
-    it('should render `<b>No Template</b> if no template provided.', function () {
+    it('should render `No Template` if no template provided.', function () {
       var instance = new block
-      assert.equal(instance.toString(), '<b>No template</b>')
+      assert.equal(instance.render(), 'No Template')
+    })
+
+    it('should render a template provided to the constructor', function () {
+      var instance = new block({
+        template: "Hello there"
+      })
+      assert.equal(instance.render(), 'Hello there')
+    })
+
+    it('should render a template with the print opperator', function () {
+      var instance = new block({
+        template: "<%='Hello there' %>"
+      })
+      assert.equal(instance.render(), 'Hello there')
     })
   })
 

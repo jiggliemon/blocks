@@ -156,6 +156,10 @@ block.prototype = {
   ,toString: function () {
     return this.compile()
   }
+
+  ,render: function () {
+    return this.compile()
+  }
 }
 
 // Because I always write addBlock.  Maybe this will have

@@ -20,7 +20,9 @@
     "url": "git://github.com/jiggliemon/blocks.git"
   },
   "dependencies": {
-    "lodash":"*"    
+    "lodash":"*",
+    "kiev": "*",
+    "yeah":"*"  
   },
   "devDependencies": {},
   "optionalDependencies": {},
