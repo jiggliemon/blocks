@@ -23,6 +23,16 @@ define(['./block'], function (b) {
 		,toString: function () {
 			return '[object Block]'
 		}
+
+		/**
+		 *
+		 *
+		 */
+		,render: function () {
+			var html = b.prototype.render.call(this)
+			
+		}
+
 	})
 
 	return Block

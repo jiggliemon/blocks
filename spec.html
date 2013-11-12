@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <title>Mocha</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="lib/browser/mocha.css" />
+    <script src="./lib/mocha.js"></script>
+    <script>mocha.setup('bdd')</script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+    <script>
+      window.require = {
+        baseUrl: '/'
+        ,packages:[
+             {name: "jquery", location: "lib/browser", main: "jquery.js"}
+            ,{name: "kiev",   location:"node_modules/kiev", main: "index"}
+            ,{name: "lodash", location:"node_modules/lodash", main: "lodash.js" }
+            ,{name: "yeah",   location:"node_modules/yeah", main: "yeah.js"}
+            ,{name: "assert", location:"lib", main: "assert.js"}
+          ]
+        ,shim: {
+             "mocha":{exports: "mocha"}
+            ,"jquery":{exports: "jQuery"}
+          }
+        ,deps: ["jquery","test/block"]
+        ,callback: function ( ) {
+          var runner = mocha.run()
+        }
+      }
+    </script>
+    <script src="./node_modules/cajon/cajon.js"></script>
+  </body>
+</html>

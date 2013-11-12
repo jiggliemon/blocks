@@ -14,19 +14,23 @@
   "author": "Chase Wilson <@jiggliemon> (http://agroism.com)",
   "bugs": {
     "url": "https://github.com/jiggliemon/blocks/issues"
-  },
+    },
   "repository": {
     "type": "git",
     "url": "git://github.com/jiggliemon/blocks.git"
-  },
+    },
   "dependencies": {
     "lodash":"*",
     "kiev": "*",
     "yeah":"*"  
-  },
-  "devDependencies": {},
+    },
+  "devDependencies": {
+    "assert":"*",
+    "mocha":"*",
+    "cajon":"*"
+    },
   "optionalDependencies": {},
   "engines": {
     "node": "*"
-  }
+    }
 }
