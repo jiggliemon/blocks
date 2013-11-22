@@ -8,7 +8,20 @@ var result = lodash.result
 var forOwn = lodash.forOwn
 var forEach = lodash.forEach
 
+
+var blockCount = 0
+
 function block ( methods ) {
+  if (typeof methods == 'string' ) {
+    methods = {
+      template: methods
+    }
+  }
+
+  if (!(this instanceof block)) {
+    return new block(methods)
+  }
+
   extend( this, methods)
   this.initialize(methods)
 }
@@ -159,6 +172,19 @@ block.prototype = {
 
   ,render: function () {
     return this.compile()
+  }
+
+  /**
+   *  #getUniqueId
+   *
+   *
+   */ 
+  ,getUniqueId: function () {
+    var self = this
+    if (!self._uniqueId) {
+      self._uniqueId = Date.now().toString(36) + (blockCount++)
+    }
+    return self._uniqueId
   }
 }
 

@@ -1,7 +1,7 @@
 var block = require('../block')
 var assert = require('assert')
 
-describe ('block', function () {
+describe ('Server side block', function () {
   
   var Construct, constructInstance 
   beforeEach(function () {

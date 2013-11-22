@@ -19,7 +19,7 @@ var ctor = function () {}
 // Helper function to correctly set up the prototype chain, for subclasses.
 // Similar to `goog.inherits`, but uses a hash of prototype properties and
 // class properties to be extended.
-var inherits = function (parent, protoProps, staticProps) {
+function inherits (parent, protoProps, staticProps) {
     function child () { 
       return parent.apply(this, arguments) 
     }

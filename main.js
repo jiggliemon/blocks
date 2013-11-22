@@ -1,39 +1,45 @@
 define(['./block'], function (b) {
 
-	var Block = b.begets({
-		inits: [
-			function () {
+  var Block = b.begets({
+    inits: [
+      function () {
 
-			}
-		]
-		/**
-		 *
-		 *
-		 */
-		,toElement: function () {
+      }
+    ]
+    /**
+     *
+     *
+     */
+    ,toDOM: function () {
+      var frag = document.createDocumentFragment()
+      var tmp = document.createElement('div')
+      var tmpl = this.compile()
+      tmp.innerHTML = tmpl
+      return tmp.childNodes
+    }
+    
+    /**
+        @overrides
+     *  #toStrung
+     *  This is to do type checking
+     *  todo: see if we even actually need this?
+     */
+    ,toString: function () {
+      return '<div id="'+this.getUniqueId()+'"></div>'
+    }
 
-		}
-		
-		/**
-				@overrides
-		 *	#toStrung
-		 *	This is to do type checking
-		 * 	todo: see if we even actually need this?
-		 */
-		,toString: function () {
-			return '[object Block]'
-		}
+    /**
+     *
+     *
+     */
+    ,render: function () {
+      var html = b.prototype.render.call(this)
 
-		/**
-		 *
-		 *
-		 */
-		,render: function () {
-			var html = b.prototype.render.call(this)
-			
-		}
+    }
 
-	})
+  })
 
-	return Block
+  console.dir()
+
+  return Block
 })
